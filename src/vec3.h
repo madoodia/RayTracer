@@ -13,52 +13,52 @@
 class vec3
 {
 public:
+	float x, y, z;
+public:
 	vec3() {}
-	vec3(float x, float y, float z) { X = x; Y = y; Z = z; }
+	vec3(float a, float b, float c) { x = a; y = b; z = c; }
 
-	float x() const { return X; }
-	float y() const { return Y; }
-	float z() const { return Z; }
+	// Unary Operators
+	vec3& operator-() const { vec3 r;  r.x = -x; r.y = -y; r.z = -z; return r; }
 
-	const vec3& operator+() const { return *this; }
-	vec3 operator+(const vec3& v1) const { return vec3(x() + v1.x(), y() + v1.y(), z() + v1.z()); }
+	// Binary Operators
+	vec3 operator+(const vec3& rhs) const { vec3 r;	r.x = x + rhs.x; r.y = y + rhs.y; r.z = z + rhs.z; return r; }
+	vec3 operator-(const vec3& rhs) const { vec3 r;	r.x = x - rhs.x; r.y = y - rhs.y; r.z = z - rhs.z; return r; }
+	vec3 operator*(const vec3& rhs) const { vec3 r;	r.x = x * rhs.x; r.y = y * rhs.y; r.z = z * rhs.z; return r; }
+	vec3 operator/(const vec3& rhs) const { vec3 r;	r.x = x / rhs.x; r.y = y / rhs.y; r.z = z / rhs.z; return r; }
+	vec3 operator+(float scalar)	const { vec3 r;	r.x = x + scalar; r.y = y + scalar; r.z = z + scalar; return r; }
+	vec3 operator-(float scalar)	const { vec3 r;	r.x = x - scalar; r.y = y - scalar; r.z = z - scalar; return r; }
+	vec3 operator*(float scalar)	const { vec3 r;	r.x = x * scalar; r.y = y * scalar; r.z = z * scalar; return r; }
+	vec3 operator/(float scalar)	const { vec3 r;	r.x = x / scalar; r.y = y / scalar; r.z = z / scalar; return r; }
 
-	vec3 operator-() const { return vec3(-x(), -y(), -z()); }
-	vec3 operator-(const vec3& v1)const { return vec3(x() - v1.x(), y() - v1.y(), z() - v1.z()); }
+	// Assignment Operators
+	const vec3& operator+=(const vec3& rhs) { x += rhs.x; y += rhs.y; z += rhs.z; return *this; }
+	const vec3& operator-=(const vec3& rhs) { x -= rhs.x; y -= rhs.y; z -= rhs.z; return *this; }
+	const vec3& operator*=(const vec3& rhs) { x *= rhs.x; y *= rhs.y; z *= rhs.z; return *this; }
+	const vec3& operator/=(const vec3& rhs) { x /= rhs.x; y /= rhs.y; z /= rhs.z; return *this; }
+	const vec3& operator+=(float scalar) { x += scalar; y += scalar; z += scalar; return *this; }
+	const vec3& operator-=(float scalar) { x -= scalar; y -= scalar; z -= scalar; return *this; }
+	const vec3& operator*=(float scalar) { x *= scalar; y *= scalar; z *= scalar; return *this; }
+	const vec3& operator/=(float scalar) { x /= scalar; y /= scalar; z /= scalar; return *this; }
 
-	vec3 operator*(const vec3& v1) const { return vec3(x() * v1.x(), y() * v1.y(), z() * v1.z()); }
-	vec3 operator*(float scalar) const { return vec3(x() * scalar, y() * scalar, z() * scalar); }
-
-	vec3 operator/(const vec3& v1) const { return vec3(x() / v1.x(), y() / v1.y(), z() / v1.z()); }
-	vec3 operator/(float scalar) const { return vec3(x() / scalar, y() / scalar, z() / scalar); }
-
-	vec3 operator+=(const vec3& v2) const { return *this + v2; }
-	vec3 operator-=(const vec3& v2) const { return *this - v2; }
-	vec3 operator*=(const vec3& v2) const { return *this * v2; }
-	vec3 operator/=(const vec3& v2) const { return *this / v2; }
-	vec3 operator*=(const float t) const { return *this * t; }
-	vec3 operator/=(const float t) const { return *this / t; }
-
-	float length() const { return sqrt(x() * x() + y() * y() + z() * z()); }
-	float squareLength() const { return x() * x() + y() * y() + z() * z(); }
+	float length() const { return sqrt(x * x + y * y + z * z); }
+	float squareLength() const { return x * x + y * y + z * z; }
 	vec3 normalize() { return *this / length(); }
 
-	float dot(const vec3& v1, const vec3& v2) { return v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z(); }
+	float dot(const vec3& v1, const vec3& v2) { return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z; }
 	vec3 cross(const vec3& v1, const vec3& v2)
 	{
-		return vec3((v1.y() * v2.z() - v1.z() * v2.y()),
-			-(v1.x() * v2.z() - v1.z() * v2.x()),
-			(v1.x() * v2.y() - v1.y() * v2.x()));
+		return vec3((v1.y * v2.z - v1.z * v2.y),
+			-(v1.x * v2.z - v1.z * v2.x),
+			(v1.x * v2.y - v1.y * v2.x));
 	}
 
-	friend std::ostream& operator<<(std::ostream& stream, const vec3& other)
-	{
-		stream << other.x() << " " << other.y() << " " << other.z() << std::endl;
-		return stream;
-	}
-
-private:
-	float X, Y, Z;
+	// Friends functions
+	friend std::ostream& operator<<(std::ostream& stream, const vec3& other) { stream << other.x << " " << other.y << " " << other.z << std::endl;	return stream; }
+	friend vec3 operator+(float lhs, const vec3& rhs) { return rhs + lhs; }
+	friend vec3 operator-(float lhs, const vec3& rhs) { return -(rhs - lhs); }
+	friend vec3 operator*(float lhs, const vec3& rhs) { return rhs * lhs; }
+	friend vec3 operator/(float lhs, const vec3& rhs) { return rhs / lhs; }
 };
 
 

@@ -12,7 +12,7 @@ class Ray
 {
 public:
 	Ray() {}
-	Ray(const vec3& a, const vec3& b) { A = a; B = b; }
+	Ray(const vec3& orig, const vec3& dir) { A = orig; B = dir; }
 	vec3 origin() const { return A; }
 	vec3 direction() const { return B; }
 	vec3 pFunction(float t) const { return A + B * t; }
