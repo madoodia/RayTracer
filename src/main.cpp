@@ -15,43 +15,31 @@
 #include <fstream>
 #include <float.h>
 
+#include "common.h"
 #include "myTimer.h"
 #include "sphere.h"
 #include "hitableList.h"
 #include "camera.h"
+#include "material.h"
+#include "lambertian.h"
+#include "metal.h"
 
 
-float createRandom()
-{
-	//This will generate a number from 0.0 to 1.0, inclusive.
-
-	float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-	//This will generate a number from 0.0 to some arbitrary float, X:
-
-	//float r2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / X));
-	//This will generate a number from some arbitrary LO to some arbitrary HI:
-
-	//float r3 = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
-	return r;
-}
-
-vec3 randomOnSphere()
-{
-	vec3 p;
-	do
-	{
-		p = 2.0 * vec3(createRandom(), createRandom(), createRandom()) - vec3(1, 1, 1);
-	} while(dot(p, p) >= 1.0);
-	return p;
-}
-
-vec3 setColor(const Ray& ray, Hitable* world)
+vec3 setColor(const Ray& ray, Hitable* world, int depth)
 {
 	HitRecord record;
 	if(world->hit(ray, 0.0, FLT_MAX, record))
 	{
-		vec3 target = record.p + record.normal + randomOnSphere();
-		return 0.5 * setColor(Ray(record.p, target - record.p), world);
+		Ray scattered;
+		vec3 attenuation;
+		if(depth < 50 && record.matPtr->scatter(ray, record, attenuation, scattered))
+		{
+			return attenuation * setColor(scattered, world, depth + 1);
+		}
+		else
+		{
+			return vec3(0, 0, 0);
+		}
 	}
 	else
 	{
@@ -69,20 +57,21 @@ int main()
 		Timer timer;
 		int nx = 500;
 		int ny = 250;
-		int ns = 25;
+		int ns = 100;
 
 		std::ofstream imageFile;
 		imageFile.open("../output/outputImage.ppm");
 
 		imageFile << "P3\n" << nx << " " << ny << "\n255\n";
 
-		Hitable* list[2];
-		list[0] = new Sphere(vec3(0.0, 0.0, -1.0), 0.5);
-		list[1] = new Sphere(vec3(0.0, -100.5, -1.0), 100);
-		Hitable* world = new HitableList(list, 2);
+		Hitable* list[4];
+		list[0] = new Sphere(vec3(0.0, 0.0, -1.0), 0.5, new Lambertian(vec3(0.8, 0.3, 0.3)));
+		list[1] = new Sphere(vec3(0.0, -100.5, -1.0), 100, new Lambertian(vec3(0.8, 0.8, 0.0)));
+		list[2] = new Sphere(vec3(1.0, 0.0, -1.0), 0.5, new Metal(vec3(0.8, 0.6, 0.2), 1.2));
+		list[3] = new Sphere(vec3(-1.0, 0.0, -1.0), 0.5, new Metal(vec3(0.8, 0.8, 0.8), 0.2));
+		Hitable* world = new HitableList(list, 4);
 
 		Camera cam;
-
 		for(int j = ny - 1; j >= 0; j--)
 		{
 			for(int i = 0; i < nx; i++)
@@ -95,7 +84,7 @@ int main()
 
 					Ray ray = cam.getRay(u, v);
 					vec3 p = ray.pFunction(2.0);
-					col += setColor(ray, world);
+					col += setColor(ray, world, 0);
 				}
 				col /= float(ns);
 				col = vec3(sqrt(col.x), sqrt(col.y), sqrt(col.z));

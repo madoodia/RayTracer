@@ -7,13 +7,7 @@
 #define HITABLE_H
 
 #include "ray.h"
-
-struct HitRecord
-{
-	float t;
-	vec3 p;
-	vec3 normal;
-};
+#include "common.h"
 
 class Hitable
 {
