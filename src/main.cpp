@@ -35,6 +35,20 @@ vec3 setColor(const Ray& ray, Hitable* world)
 	}
 }
 
+float createRandom()
+{
+	//This will generate a number from 0.0 to 1.0, inclusive.
+
+	float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	//This will generate a number from 0.0 to some arbitrary float, X:
+
+	//float r2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / X));
+	//This will generate a number from some arbitrary LO to some arbitrary HI:
+
+	//float r3 = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
+	return r;
+}
+
 int main()
 {
 	// Calculate Time for running the code
@@ -43,35 +57,38 @@ int main()
 		Timer timer;
 		int nx = 500;
 		int ny = 250;
+		int ns = 25;
 
 		std::ofstream imageFile;
 		imageFile.open("../output/outputImage.ppm");
 
 		imageFile << "P3\n" << nx << " " << ny << "\n255\n";
 
-		// camera
-		Camera cam;
-
 		Hitable* list[2];
 		list[0] = new Sphere(vec3(0.0, 0.0, -1.0), 0.5);
 		list[1] = new Sphere(vec3(0.0, -100.5, -1.0), 100);
-
 		Hitable* world = new HitableList(list, 2);
+
+		Camera cam;
 
 		for(int j = ny - 1; j >= 0; j--)
 		{
 			for(int i = 0; i < nx; i++)
 			{
-				float u = float(i) / float(nx);
-				float v = float(j) / float(ny);
+				vec3 col(0.0, 0.0, 0.0);
+				for(int s = 0; s < ns; s++)
+				{
+					float u = float(i + createRandom()) / float(nx);
+					float v = float(j + createRandom()) / float(ny);
 
-				Ray ray = cam.getRay(u, v);
-				vec3 p = ray.pFunction(2.0);
-				vec3 col = setColor(ray, world);
+					Ray ray = cam.getRay(u, v);
+					vec3 p = ray.pFunction(2.0);
+					col += setColor(ray, world);
+				}
+				col /= float(ns);
 				int ir = int(255.99 * col.x);
 				int ig = int(255.99 * col.y);
 				int ib = int(255.99 * col.z);
-				//std::cout << ir << " " << ig << " " << ib << "\n";
 				imageFile << ir << " " << ig << " " << ib << "\n";
 			}
 		}
