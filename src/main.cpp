@@ -20,20 +20,6 @@
 #include "hitableList.h"
 #include "camera.h"
 
-vec3 setColor(const Ray& ray, Hitable* world)
-{
-	HitRecord record;
-	if(world->hit(ray, 0.0, 1000, record))
-	{
-		return 0.5 * vec3(record.normal.x + 1, record.normal.y + 1, record.normal.z + 1);
-	}
-	else
-	{
-		vec3 unit = ray.direction().normalize();
-		float t = 0.5 * (unit.y + 1.0);
-		return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
-	}
-}
 
 float createRandom()
 {
@@ -47,6 +33,32 @@ float createRandom()
 
 	//float r3 = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
 	return r;
+}
+
+vec3 randomOnSphere()
+{
+	vec3 p;
+	do
+	{
+		p = 2.0 * vec3(createRandom(), createRandom(), createRandom()) - vec3(1, 1, 1);
+	} while(dot(p, p) >= 1.0);
+	return p;
+}
+
+vec3 setColor(const Ray& ray, Hitable* world)
+{
+	HitRecord record;
+	if(world->hit(ray, 0.0, FLT_MAX, record))
+	{
+		vec3 target = record.p + record.normal + randomOnSphere();
+		return 0.5 * setColor(Ray(record.p, target - record.p), world);
+	}
+	else
+	{
+		vec3 unit = ray.direction().normalize();
+		float t = 0.5 * (unit.y + 1.0);
+		return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+	}
 }
 
 int main()
@@ -86,6 +98,7 @@ int main()
 					col += setColor(ray, world);
 				}
 				col /= float(ns);
+				col = vec3(sqrt(col.x), sqrt(col.y), sqrt(col.z));
 				int ir = int(255.99 * col.x);
 				int ig = int(255.99 * col.y);
 				int ib = int(255.99 * col.z);
