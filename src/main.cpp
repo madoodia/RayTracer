@@ -3,6 +3,8 @@
 // All rights reserved.
 // ------------------
 
+// PPM Viewer: http://web.eecs.utk.edu/~smarz1/pgmview/
+
 // C++ Headers
 
 // Third Party Headers
@@ -16,24 +18,29 @@
 #include "myTimer.h"
 #include "ray.h"
 
-bool hitSphere(const vec3& center, float radius, const Ray& ray)
+float hitSphere(const vec3& center, float radius, const Ray& ray)
 {
 	vec3 oc = ray.origin() - center;
 	float a = dot(ray.direction(), ray.direction());
 	float b = 2.0 * dot(oc, ray.direction());
 	float c = dot(oc, oc) - radius * radius;
 	float discriminant = b * b - 4 * a * c;
-	return discriminant > 0.0;
+	if(discriminant < 0.0)
+		return -1.0;
+	else
+		return (-b - sqrt(discriminant)) / (2.0 * a);
 }
 
 vec3 setColor(const Ray& ray)
 {
-	if(hitSphere(vec3(0, 0, -1), 0.5, ray))
+	float t = hitSphere(vec3(0, 0, -1), 0.5, ray);
+	if(t > 0.0)
 	{
-		return vec3(1, 0, 0);
+		vec3 N = (ray.pFunction(t) - vec3(0.0, 0.0, -1.0)).normalize();
+		return 0.5 * vec3(N.x + 1, N.y + 1, N.z + 1);
 	}
 	vec3 unit = ray.direction().normalize();
-	float t = 0.5 * (unit.y + 1.0);
+	t = 0.5 * (unit.y + 1.0);
 	return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
 }
 
@@ -43,8 +50,8 @@ int main()
 	// inline functions and regular functions.
 	{
 		Timer timer;
-		int nx = 400;
-		int ny = 200;
+		int nx = 500;
+		int ny = 250;
 
 		std::ofstream imageFile;
 		imageFile.open("../src/image.ppm");
