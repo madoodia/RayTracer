@@ -13,35 +13,25 @@
 
 #include <iostream>
 #include <fstream>
+#include <float.h>
 
-#include "vec3.h"
 #include "myTimer.h"
-#include "ray.h"
+#include "sphere.h"
+#include "hitableList.h"
 
-float hitSphere(const vec3& center, float radius, const Ray& ray)
+vec3 setColor(const Ray& ray, Hitable* world)
 {
-	vec3 oc = ray.origin() - center;
-	float a = dot(ray.direction(), ray.direction());
-	float b = 2.0 * dot(oc, ray.direction());
-	float c = dot(oc, oc) - radius * radius;
-	float discriminant = b * b - 4 * a * c;
-	if(discriminant < 0.0)
-		return -1.0;
-	else
-		return (-b - sqrt(discriminant)) / (2.0 * a);
-}
-
-vec3 setColor(const Ray& ray)
-{
-	float t = hitSphere(vec3(0, 0, -1), 0.5, ray);
-	if(t > 0.0)
+	HitRecord record;
+	if(world->hit(ray, 0.0, 1000, record))
 	{
-		vec3 N = (ray.pFunction(t) - vec3(0.0, 0.0, -1.0)).normalize();
-		return 0.5 * vec3(N.x + 1, N.y + 1, N.z + 1);
+		return 0.5 * vec3(record.normal.x + 1, record.normal.y + 1, record.normal.z + 1);
 	}
-	vec3 unit = ray.direction().normalize();
-	t = 0.5 * (unit.y + 1.0);
-	return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+	else
+	{
+		vec3 unit = ray.direction().normalize();
+		float t = 0.5 * (unit.y + 1.0);
+		return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+	}
 }
 
 int main()
@@ -54,7 +44,7 @@ int main()
 		int ny = 250;
 
 		std::ofstream imageFile;
-		imageFile.open("../src/image.ppm");
+		imageFile.open("../output/outputImage.ppm");
 
 		imageFile << "P3\n" << nx << " " << ny << "\n255\n";
 
@@ -64,6 +54,12 @@ int main()
 		vec3 vertical(0.0, 2.0, 0.0);
 		vec3 origin(0.0, 0.0, 0.0);
 
+		Hitable* list[2];
+		list[0] = new Sphere(vec3(0.0, 0.0, -1.0), 0.5);
+		list[1] = new Sphere(vec3(0.0, -100.5, -1.0), 100);
+
+		Hitable* world = new HitableList(list, 2);
+
 		for(int j = ny - 1; j >= 0; j--)
 		{
 			for(int i = 0; i < nx; i++)
@@ -72,7 +68,8 @@ int main()
 				float v = float(j) / float(ny);
 
 				Ray ray(origin, llc + u * horizontal + v * vertical);
-				vec3 col = setColor(ray);
+				vec3 p = ray.pFunction(2.0);
+				vec3 col = setColor(ray, world);
 				int ir = int(255.99 * col.x);
 				int ig = int(255.99 * col.y);
 				int ib = int(255.99 * col.z);
@@ -81,6 +78,7 @@ int main()
 			}
 		}
 		imageFile.close();
+
 		std::cout << "Time is: ";
 	}
 	return 0;

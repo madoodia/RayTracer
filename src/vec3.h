@@ -14,8 +14,9 @@ class vec3
 {
 public:
 	float x, y, z;
+
 public:
-	vec3() {}
+	vec3() :x(0.0), y(0.0), z(0.0) {}
 	vec3(float a, float b, float c) { x = a; y = b; z = c; }
 
 	// Unary Operators
