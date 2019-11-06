@@ -8,6 +8,8 @@
 
 #include "vec3.h"
 
+#define M_PI 3.14159265359
+
 class Material;
 
 struct HitRecord

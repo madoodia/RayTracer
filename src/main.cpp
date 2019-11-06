@@ -58,22 +58,23 @@ int main()
 		Timer timer;
 		int nx = 500;
 		int ny = 250;
-		int ns = 100;
+		int ns = 200;
 
 		std::ofstream imageFile;
 		imageFile.open("../output/outputImage.ppm");
 
 		imageFile << "P3\n" << nx << " " << ny << "\n255\n";
 
+		float R = cos(M_PI / 4);
+
 		Hitable* list[4];
-		list[0] = new Sphere(vec3(0.0, 0.0, -1.0), 0.5, new Lambertian(vec3(0.8, 0.3, 0.3)));
-		list[1] = new Sphere(vec3(0.0, -100.5, -1.0), 100, new Lambertian(vec3(0.8, 0.8, 0.0)));
-		list[2] = new Sphere(vec3(1.0, 0.0, -1.0), 0.5, new Metal(vec3(0.8, 0.6, 0.2), 1.2));
-		//list[3] = new Sphere(vec3(-1.0, 0.0, -1.0), 0.5, new Metal(vec3(0.8, 0.8, 0.8), 0.2));
-		list[3] = new Sphere(vec3(-1.0, 0.0, -1.0), 0.5, new Dielectric(1.3));
+		list[0] = new Sphere(vec3(R, 0.0, -1.0), R, new Lambertian(vec3(0, 0, 1)));
+		list[1] = new Sphere(vec3(0, 0, -1.0), R, new Metal(vec3(0.8, 0.6, 0.2), 1.2));
+		list[2] = new Sphere(vec3(0.0, -100.5, -1.0), 100, new Lambertian(vec3(0.8, 0.8, 0.0)));
+		list[3] = new Sphere(vec3(-R, 0.0, -1.0), R, new Dielectric(1.3));
 		Hitable* world = new HitableList(list, 4);
 
-		Camera cam;
+		Camera cam(vec3(-1, 1.5, .5), vec3(0, 0, -1), vec3(0, 1, 0), 90, float(nx) / float(ny));
 		for(int j = ny - 1; j >= 0; j--)
 		{
 			for(int i = 0; i < nx; i++)
@@ -85,7 +86,7 @@ int main()
 					float v = float(j + createRandom()) / float(ny);
 
 					Ray ray = cam.getRay(u, v);
-					vec3 p = ray.pFunction(2.0);
+					vec3 p = ray.pFunction(1.0);
 					col += setColor(ray, world, 0);
 				}
 				col /= float(ns);

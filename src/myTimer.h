@@ -19,7 +19,7 @@ struct Timer
 		duration = end - start;
 
 		float ms = duration.count() * 1000.0f;
-		std::cout << ms << "ms\n";
+		std::cout << ms << "ms (" << ms / 1000.0 << " sec / " << ms / 60000.0 << " min)\n";
 	}
 };
 

@@ -11,12 +11,20 @@
 class Camera
 {
 public:
-	Camera()
+	Camera(vec3 lookFrom, vec3 lookAt, vec3 vup, float vfov, float aspect)
 	{
-		llc = vec3(-2.0, -1.0, -1.0);
-		horizontal = vec3(4.0, 0.0, 0.0);
-		vertical = vec3(0.0, 2.0, 0.0);
-		origin = vec3(0.0, 0.0, 0.0);
+		vec3 right, up, w;
+		float theta = vfov * M_PI / 180;
+		float halfHeight = tan(theta / 2);
+		float halfWidth = aspect * halfHeight;
+		origin = lookFrom;
+		w = (lookFrom - lookAt).normalize();
+		right = cross(vup, w).normalize();
+		up = cross(w, right);
+		//llc = vec3(-halfWidth, -halfHeight, -1.0);
+		llc = origin - halfWidth * right - halfHeight * up - w;
+		horizontal = 2 * halfWidth * right;
+		vertical = 2 * halfHeight * up;
 	}
 	Ray getRay(float u, float v) { return Ray(origin, llc + u * horizontal + v * vertical - origin); }
 
