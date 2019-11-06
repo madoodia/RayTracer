@@ -58,7 +58,7 @@ int main()
 		Timer timer;
 		int nx = 500;
 		int ny = 250;
-		int ns = 200;
+		int ns = 100;
 
 		std::ofstream imageFile;
 		imageFile.open("../output/outputImage.ppm");
@@ -68,13 +68,17 @@ int main()
 		float R = cos(M_PI / 4);
 
 		Hitable* list[4];
-		list[0] = new Sphere(vec3(R, 0.0, -1.0), R, new Lambertian(vec3(0, 0, 1)));
-		list[1] = new Sphere(vec3(0, 0, -1.0), R, new Metal(vec3(0.8, 0.6, 0.2), 1.2));
+		list[0] = new Sphere(vec3(0.0, 0.0, -1.0), R, new Lambertian(vec3(0, 0, 1)));
+		list[1] = new Sphere(vec3(R, 0.0, -1.0), R, new Metal(vec3(0.8, 0.6, 0.2), 1.2));
 		list[2] = new Sphere(vec3(0.0, -100.5, -1.0), 100, new Lambertian(vec3(0.8, 0.8, 0.0)));
 		list[3] = new Sphere(vec3(-R, 0.0, -1.0), R, new Dielectric(1.3));
 		Hitable* world = new HitableList(list, 4);
 
-		Camera cam(vec3(-1, 1.5, .5), vec3(0, 0, -1), vec3(0, 1, 0), 90, float(nx) / float(ny));
+		vec3 lookFrom(3, 3, 2);
+		vec3 lookAt(0, 0, -1);
+		float aperture = 2.0;
+		float dof = (lookFrom - lookAt).length();
+		Camera cam(lookFrom, lookAt, vec3(0, 1, 0), 20, float(nx) / float(ny), aperture, dof);
 		for(int j = ny - 1; j >= 0; j--)
 		{
 			for(int i = 0; i < nx; i++)

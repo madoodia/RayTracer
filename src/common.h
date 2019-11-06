@@ -34,6 +34,16 @@ float createRandom()
 	return r;
 }
 
+vec3 randomOnDisk()
+{
+	vec3 p;
+	do
+	{
+		p = 2.0 * vec3(createRandom(), createRandom(), 0) - vec3(1, 1, 0);
+	} while(dot(p, p) >= 1.0);
+	return p;
+}
+
 vec3 randomOnSphere()
 {
 	vec3 p;
