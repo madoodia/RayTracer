@@ -29,7 +29,7 @@
 vec3 setColor(const Ray& ray, Hitable* world, int depth)
 {
 	HitRecord record;
-	if(world->hit(ray, 0.0, FLT_MAX, record))
+	if(world->hit(ray, 0.001, FLT_MAX, record))
 	{
 		Ray scattered;
 		vec3 attenuation;
@@ -50,6 +50,43 @@ vec3 setColor(const Ray& ray, Hitable* world, int depth)
 	}
 }
 
+Hitable* randomScene()
+{
+	int n = 500;
+	Hitable** list = new Hitable * [n + 1];
+	list[0] = new Sphere(vec3(0, -1000, 0), 1000, new Lambertian(vec3(0.5, 0.5, 0.5)));
+	int i = 1;
+	for(int a = -11; a < 11; a++)
+	{
+		for(int b = -11; b < 11; b++)
+		{
+			float chooseMat = createRandom();
+			vec3 center(a + 0.9 * createRandom(), 0.2, b + 0.9 * createRandom());
+			if((center - vec3(4, 0.2, 0)).length() > 0.9) // diffuse
+			{
+				list[i++] = new Sphere(center, 0.2, new Lambertian(vec3(createRandom() * createRandom(), createRandom() * createRandom(), createRandom() * createRandom())));
+			}
+			else if(chooseMat < 0.95) // metal
+			{
+				list[i++] = new Sphere(center, 0.2, new Metal(
+					vec3(0.5 * (1 + createRandom()),
+						0.5 * (1 + createRandom()),
+						0.5 * (1 + createRandom())), 0.5 * createRandom()));
+			}
+			else // glass
+			{
+				list[i++] = new Sphere(center, 0.2, new Dielectric(1.5));
+			}
+		}
+	}
+
+	list[i++] = new Sphere(vec3(0, 1, 0), 1.0, new Dielectric(1.5));
+	list[i++] = new Sphere(vec3(-4, 1, 0), 1.0, new Lambertian(vec3(0.4, 0.2, 0.1)));
+	list[i++] = new Sphere(vec3(4, 1, 0), 1.0, new Metal(vec3(0.7, 0.6, 0.5), 0.0));
+
+	return new HitableList(list, i);
+}
+
 int main()
 {
 	// Calculate Time for running the code
@@ -65,16 +102,9 @@ int main()
 
 		imageFile << "P3\n" << nx << " " << ny << "\n255\n";
 
-		float R = cos(M_PI / 4);
+		Hitable* world = randomScene();
 
-		Hitable* list[4];
-		list[0] = new Sphere(vec3(0.0, 0.0, -1.0), R, new Lambertian(vec3(0, 0, 1)));
-		list[1] = new Sphere(vec3(R, 0.0, -1.0), R, new Metal(vec3(0.8, 0.6, 0.2), 1.2));
-		list[2] = new Sphere(vec3(0.0, -100.5, -1.0), 100, new Lambertian(vec3(0.8, 0.8, 0.0)));
-		list[3] = new Sphere(vec3(-R, 0.0, -1.0), R, new Dielectric(1.3));
-		Hitable* world = new HitableList(list, 4);
-
-		vec3 lookFrom(3, 3, 2);
+		vec3 lookFrom(7, 2, 3);
 		vec3 lookAt(0, 0, -1);
 		float aperture = 2.0;
 		float dof = (lookFrom - lookAt).length();
