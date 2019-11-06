@@ -47,4 +47,25 @@ vec3 reflect(const vec3& v, const vec3& n)
 	return v - 2 * dot(v, n) * n;
 }
 
+bool refract(const vec3& v, const vec3& n, float niOnt, vec3& refracted)
+{
+	vec3 uv = v.normalize();
+	float dt = dot(uv, n);
+	float discreminant = 1.0 - niOnt * niOnt * (1 - dt * dt);
+	if(discreminant > 0)
+	{
+		refracted = niOnt * (v - n * dt) - n * sqrt(discreminant);
+		return true;
+	}
+	else
+		return false;
+}
+
+float schlick(float cosine, float refIdx)
+{
+	float r0 = (1 - refIdx) / (1 + refIdx);
+	r0 = r0 * r0;
+	return r0 + (1 - r0) * pow((1 - cosine), 5);
+}
+
 #endif // COMMON_H

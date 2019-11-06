@@ -23,6 +23,7 @@
 #include "material.h"
 #include "lambertian.h"
 #include "metal.h"
+#include "dielectric.h"
 
 
 vec3 setColor(const Ray& ray, Hitable* world, int depth)
@@ -68,7 +69,8 @@ int main()
 		list[0] = new Sphere(vec3(0.0, 0.0, -1.0), 0.5, new Lambertian(vec3(0.8, 0.3, 0.3)));
 		list[1] = new Sphere(vec3(0.0, -100.5, -1.0), 100, new Lambertian(vec3(0.8, 0.8, 0.0)));
 		list[2] = new Sphere(vec3(1.0, 0.0, -1.0), 0.5, new Metal(vec3(0.8, 0.6, 0.2), 1.2));
-		list[3] = new Sphere(vec3(-1.0, 0.0, -1.0), 0.5, new Metal(vec3(0.8, 0.8, 0.8), 0.2));
+		//list[3] = new Sphere(vec3(-1.0, 0.0, -1.0), 0.5, new Metal(vec3(0.8, 0.8, 0.8), 0.2));
+		list[3] = new Sphere(vec3(-1.0, 0.0, -1.0), 0.5, new Dielectric(1.3));
 		Hitable* world = new HitableList(list, 4);
 
 		Camera cam;

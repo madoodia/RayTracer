@@ -44,7 +44,7 @@ public:
 
 	float length() const { return sqrt(x * x + y * y + z * z); }
 	float squareLength() const { return x * x + y * y + z * z; }
-	vec3 normalize() { return *this / length(); }
+	vec3 normalize() const { return *this / length(); }
 
 	// Friends functions
 	friend std::ostream& operator<<(std::ostream& stream, const vec3& other) { stream << other.x << " " << other.y << " " << other.z << std::endl;	return stream; }
