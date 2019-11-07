@@ -25,15 +25,14 @@
 #include "metal.h"
 #include "dielectric.h"
 
-
-vec3 setColor(const Ray& ray, Hitable* world, int depth)
+vec3 setColor(const Ray &ray, Hitable *world, int depth)
 {
 	HitRecord record;
-	if(world->hit(ray, 0.001, FLT_MAX, record))
+	if (world->hit(ray, 0.001, FLT_MAX, record))
 	{
 		Ray scattered;
 		vec3 attenuation;
-		if(depth < 50 && record.matPtr->scatter(ray, record, attenuation, scattered))
+		if (depth < 50 && record.matPtr->scatter(ray, record, attenuation, scattered))
 		{
 			return attenuation * setColor(scattered, world, depth + 1);
 		}
@@ -50,34 +49,30 @@ vec3 setColor(const Ray& ray, Hitable* world, int depth)
 	}
 }
 
-Hitable* randomScene()
+Hitable *randomScene()
 {
-	int n = 500;
-	Hitable** list = new Hitable * [n + 1];
+	int n = 20;
+	Hitable **list = new Hitable *[n + 1];
 	list[0] = new Sphere(vec3(0, -1000, 0), 1000, new Lambertian(vec3(0.5, 0.5, 0.5)));
 	int i = 1;
-	for(int a = -11; a < 11; a++)
+	for (int a = -2; a < 2; a++)
 	{
-		for(int b = -11; b < 11; b++)
+		for (int b = -2; b < 2; b++)
 		{
 			float chooseMat = randomDouble();
 			vec3 center(a + 0.9 * randomDouble(), 0.2, b + 0.9 * randomDouble());
-			if((center - vec3(4, 0.2, 0)).length() > 0.9)
+			if ((center - vec3(4, 0.2, 0)).length() > 0.9)
 			{
-				if(chooseMat < 0.8) // diffuse
+				if (chooseMat < 0.8) // diffuse
 				{
 					list[i++] = new Sphere(center, 0.2,
-						new Lambertian(vec3(randomDouble() * randomDouble(),
-							randomDouble() * randomDouble(),
-							randomDouble() * randomDouble())));
+										   new Lambertian(vec3(randomDouble() * randomDouble(),
+															   randomDouble() * randomDouble(),
+															   randomDouble() * randomDouble())));
 				}
-				else if(chooseMat < 0.95) // metal
+				else if (chooseMat < 0.95) // metal
 				{
-					list[i++] = new Sphere(center, 0.2, new Metal(
-						vec3(0.5 * (1 + randomDouble()),
-							0.5 * (1 + randomDouble()),
-							0.5 * (1 + randomDouble())),
-						0.5 * randomDouble()));
+					list[i++] = new Sphere(center, 0.2, new Metal(vec3(0.5 * (1 + randomDouble()), 0.5 * (1 + randomDouble()), 0.5 * (1 + randomDouble())), 0.5 * randomDouble()));
 				}
 				else // glass
 				{
@@ -107,21 +102,22 @@ int main()
 		std::ofstream imageFile;
 		imageFile.open("../output/outputImage.ppm");
 
-		imageFile << "P3\n" << nx << " " << ny << "\n255\n";
+		imageFile << "P3\n"
+				  << nx << " " << ny << "\n255\n";
 
-		Hitable* world = randomScene();
+		Hitable *world = randomScene();
 
 		vec3 lookFrom(13, 2, 3);
 		vec3 lookAt(0, 0, 0);
 		float aperture = 0.1;
 		float dof = 10.0;
 		Camera cam(lookFrom, lookAt, vec3(0, 1, 0), 20, float(nx) / float(ny), aperture, dof);
-		for(int j = ny - 1; j >= 0; j--)
+		for (int j = ny - 1; j >= 0; j--)
 		{
-			for(int i = 0; i < nx; i++)
+			for (int i = 0; i < nx; i++)
 			{
 				vec3 col(0.0, 0.0, 0.0);
-				for(int s = 0; s < ns; s++)
+				for (int s = 0; s < ns; s++)
 				{
 					float u = float(i + randomDouble()) / float(nx);
 					float v = float(j + randomDouble()) / float(ny);
