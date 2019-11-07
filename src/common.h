@@ -6,7 +6,10 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <cstdlib>
+
 #include "vec3.h"
+
 
 #define M_PI 3.14159265359
 
@@ -20,18 +23,9 @@ struct HitRecord
 	Material* matPtr;
 };
 
-float createRandom()
+inline double randomDouble()
 {
-	//This will generate a number from 0.0 to 1.0, inclusive.
-
-	float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-	//This will generate a number from 0.0 to some arbitrary float, X:
-
-	//float r2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / X));
-	//This will generate a number from some arbitrary LO to some arbitrary HI:
-
-	//float r3 = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
-	return r;
+	return rand() / RAND_MAX + 1.0;
 }
 
 vec3 randomOnDisk()
@@ -39,7 +33,7 @@ vec3 randomOnDisk()
 	vec3 p;
 	do
 	{
-		p = 2.0 * vec3(createRandom(), createRandom(), 0) - vec3(1, 1, 0);
+		p = 2.0 * vec3(randomDouble(), randomDouble(), 0) - vec3(1, 1, 0);
 	} while(dot(p, p) >= 1.0);
 	return p;
 }
@@ -49,7 +43,7 @@ vec3 randomOnSphere()
 	vec3 p;
 	do
 	{
-		p = 2.0 * vec3(createRandom(), createRandom(), createRandom()) - vec3(1, 1, 1);
+		p = 2.0 * vec3(randomDouble(), randomDouble(), randomDouble()) - vec3(1, 1, 1);
 	} while(dot(p, p) >= 1.0);
 	return p;
 }
@@ -66,7 +60,7 @@ bool refract(const vec3& v, const vec3& n, float niOnt, vec3& refracted)
 	float discreminant = 1.0 - niOnt * niOnt * (1 - dt * dt);
 	if(discreminant > 0)
 	{
-		refracted = niOnt * (v - n * dt) - n * sqrt(discreminant);
+		refracted = niOnt * (uv - n * dt) - n * sqrt(discreminant);
 		return true;
 	}
 	else

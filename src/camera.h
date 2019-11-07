@@ -7,6 +7,7 @@
 #define CAMERA_H
 
 #include "ray.h"
+#include "common.h"
 
 class Camera
 {
@@ -38,7 +39,7 @@ public:
 	Ray getRay(float s, float t)
 	{
 		vec3 rd = lensRadius * randomOnDisk();
-		vec3 offset = right * rd.x * up * rd.y;
+		vec3 offset = right * rd.x + up * rd.y;
 		return Ray(origin + offset, llc + s * horizontal + t * vertical - origin - offset);
 	}
 

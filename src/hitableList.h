@@ -14,7 +14,7 @@ public:
 	Hitable** list;
 	int listSize;
 public:
-	HitableList() :list(NULL), listSize(0) {}
+	HitableList() {}
 	HitableList(Hitable** l, int n) : list(l), listSize(n) {}
 	virtual bool hit(const Ray& ray, float tMin, float tMax, HitRecord& record) const;
 };

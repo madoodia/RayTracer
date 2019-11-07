@@ -60,22 +60,29 @@ Hitable* randomScene()
 	{
 		for(int b = -11; b < 11; b++)
 		{
-			float chooseMat = createRandom();
-			vec3 center(a + 0.9 * createRandom(), 0.2, b + 0.9 * createRandom());
-			if((center - vec3(4, 0.2, 0)).length() > 0.9) // diffuse
+			float chooseMat = randomDouble();
+			vec3 center(a + 0.9 * randomDouble(), 0.2, b + 0.9 * randomDouble());
+			if((center - vec3(4, 0.2, 0)).length() > 0.9)
 			{
-				list[i++] = new Sphere(center, 0.2, new Lambertian(vec3(createRandom() * createRandom(), createRandom() * createRandom(), createRandom() * createRandom())));
-			}
-			else if(chooseMat < 0.95) // metal
-			{
-				list[i++] = new Sphere(center, 0.2, new Metal(
-					vec3(0.5 * (1 + createRandom()),
-						0.5 * (1 + createRandom()),
-						0.5 * (1 + createRandom())), 0.5 * createRandom()));
-			}
-			else // glass
-			{
-				list[i++] = new Sphere(center, 0.2, new Dielectric(1.5));
+				if(chooseMat < 0.8) // diffuse
+				{
+					list[i++] = new Sphere(center, 0.2,
+						new Lambertian(vec3(randomDouble() * randomDouble(),
+							randomDouble() * randomDouble(),
+							randomDouble() * randomDouble())));
+				}
+				else if(chooseMat < 0.95) // metal
+				{
+					list[i++] = new Sphere(center, 0.2, new Metal(
+						vec3(0.5 * (1 + randomDouble()),
+							0.5 * (1 + randomDouble()),
+							0.5 * (1 + randomDouble())),
+						0.5 * randomDouble()));
+				}
+				else // glass
+				{
+					list[i++] = new Sphere(center, 0.2, new Dielectric(1.5));
+				}
 			}
 		}
 	}
@@ -93,9 +100,9 @@ int main()
 	// inline functions and regular functions.
 	{
 		Timer timer;
-		int nx = 500;
-		int ny = 250;
-		int ns = 100;
+		int nx = 1200;
+		int ny = 800;
+		int ns = 10;
 
 		std::ofstream imageFile;
 		imageFile.open("../output/outputImage.ppm");
@@ -104,10 +111,10 @@ int main()
 
 		Hitable* world = randomScene();
 
-		vec3 lookFrom(7, 2, 3);
-		vec3 lookAt(0, 0, -1);
-		float aperture = 2.0;
-		float dof = (lookFrom - lookAt).length();
+		vec3 lookFrom(13, 2, 3);
+		vec3 lookAt(0, 0, 0);
+		float aperture = 0.1;
+		float dof = 10.0;
 		Camera cam(lookFrom, lookAt, vec3(0, 1, 0), 20, float(nx) / float(ny), aperture, dof);
 		for(int j = ny - 1; j >= 0; j--)
 		{
@@ -116,11 +123,10 @@ int main()
 				vec3 col(0.0, 0.0, 0.0);
 				for(int s = 0; s < ns; s++)
 				{
-					float u = float(i + createRandom()) / float(nx);
-					float v = float(j + createRandom()) / float(ny);
+					float u = float(i + randomDouble()) / float(nx);
+					float v = float(j + randomDouble()) / float(ny);
 
 					Ray ray = cam.getRay(u, v);
-					vec3 p = ray.pFunction(1.0);
 					col += setColor(ray, world, 0);
 				}
 				col /= float(ns);

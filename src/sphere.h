@@ -7,7 +7,8 @@
 #define SPHERE_H
 
 #include "hitable.h"
-#include "material.h"
+
+class Material;
 
 class Sphere : public Hitable
 {
@@ -30,7 +31,7 @@ bool Sphere::hit(const Ray& ray, float tMin, float tMax, HitRecord& record) cons
 	float discreminant = b * b - a * c;
 	if(discreminant > 0.0)
 	{
-		float temp = (-b - sqrt(b * b - a * c)) / a;
+		float temp = (-b - sqrt(discreminant)) / a;
 		if(temp <tMax && temp > tMin)
 		{
 			record.t = temp;
@@ -39,7 +40,7 @@ bool Sphere::hit(const Ray& ray, float tMin, float tMax, HitRecord& record) cons
 			record.matPtr = material;
 			return true;
 		}
-		temp = (-b + sqrt(b * b - a * c)) / a;
+		temp = (-b + sqrt(discreminant)) / a;
 		if(temp <tMax && temp > tMin)
 		{
 			record.t = temp;

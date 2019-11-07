@@ -21,13 +21,15 @@ public:
 		float niOnt;
 		attenuation = vec3(1.0, 1.0, 1.0);
 		vec3 refracted;
-		float reflectedProb;
+		float reflectProb;
 		float cosine;
 		if(dot(rayIn.direction(), record.normal) > 0)
 		{
 			outwardNormal = -record.normal;
 			niOnt = refIdx;
-			cosine = refIdx * dot(rayIn.direction(), record.normal) / rayIn.direction().length();
+			//cosine = refIdx * dot(rayIn.direction(), record.normal) / rayIn.direction().length();
+			cosine = dot(rayIn.direction(), record.normal) / rayIn.direction().length();
+			cosine = sqrt(1 - refIdx * refIdx * (1 - cosine * cosine));
 		}
 		else
 		{
@@ -37,14 +39,13 @@ public:
 		}
 		if(refract(rayIn.direction(), outwardNormal, niOnt, refracted))
 		{
-			reflectedProb = schlick(cosine, refIdx);
+			reflectProb = schlick(cosine, refIdx);
 		}
 		else
 		{
-			scattered = Ray(record.p, reflected);
-			reflectedProb = 1.0;
+			reflectProb = 1.0;
 		}
-		if(createRandom() < reflectedProb)
+		if(randomDouble() < reflectProb)
 		{
 			scattered = Ray(record.p, reflected);
 		}
