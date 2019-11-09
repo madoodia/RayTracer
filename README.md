@@ -4,4 +4,4 @@ http://in1weekend.blogspot.com/
 
 https://raytracing.github.io/
 
-![](output/outputImage.png)
+![](/output/outputImage.png)
