@@ -5,4 +5,4 @@ http://in1weekend.blogspot.com/
 
 https://raytracing.github.io/
 
-![image](/output/12_final02.png)
+![image](output/12_final02.png)
