@@ -15,6 +15,8 @@ USELESS_EXT        = *.obj \
                      *.lib \
                      *.exp \
                      *.idb \
+                     *.pdb \
+                     *.ilk \
                      *.cpp \
                      *.h
 
@@ -44,9 +46,9 @@ CC_FLAGS     = -Zc:wchar_t -O2 -FC -MT -W3 -GR -EHs $(DEFINES) # Warning Level 3
     $<
 <<
 
-all: Makefile $(TARGET) cleanup
+all: Makefile run cleanup
 
-$(TARGET):  $(OBJECTS_SRC)
+run:  $(OBJECTS_SRC)
     $(LINKER) $(LINKER_FLAGS) -OUT:$(TARGET) $(OBJECTS_OUT) $(LIBS)
 
 cleanup:

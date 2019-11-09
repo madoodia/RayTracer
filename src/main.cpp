@@ -34,7 +34,7 @@ vec3 setColor(const Ray &ray, Hitable *world, int depth)
 		vec3 attenuation;
 		if (depth < 50 && record.matPtr->scatter(ray, record, attenuation, scattered))
 		{
-			return attenuation * setColor(scattered, world, depth + 1);
+			return attenuation * setColor(scattered, world, depth + 1); // recursive
 		}
 		else
 		{
@@ -51,13 +51,13 @@ vec3 setColor(const Ray &ray, Hitable *world, int depth)
 
 Hitable *randomScene()
 {
-	int n = 20;
+	int n = 500;
 	Hitable **list = new Hitable *[n + 1];
 	list[0] = new Sphere(vec3(0, -1000, 0), 1000, new Lambertian(vec3(0.5, 0.5, 0.5)));
 	int i = 1;
-	for (int a = -2; a < 2; a++)
+	for (int a = -11; a < 11; a++)
 	{
-		for (int b = -2; b < 2; b++)
+		for (int b = -11; b < 11; b++)
 		{
 			float chooseMat = randomDouble();
 			vec3 center(a + 0.9 * randomDouble(), 0.2, b + 0.9 * randomDouble());
@@ -95,12 +95,13 @@ int main()
 	// inline functions and regular functions.
 	{
 		Timer timer;
-		int nx = 1200;
-		int ny = 800;
+		int nx = 1280;
+		int ny = 720;
 		int ns = 10;
+		std::cout << "Width: " << nx << "\nHeight: " << ny << std::endl;
 
 		std::ofstream imageFile;
-		imageFile.open("../output/outputImage.ppm");
+		imageFile.open("output/outputImage.ppm");
 
 		imageFile << "P3\n"
 				  << nx << " " << ny << "\n255\n";
@@ -137,5 +138,8 @@ int main()
 
 		std::cout << "Time is: ";
 	}
+
+	std::system("pause");
+
 	return 0;
 }
