@@ -21,10 +21,10 @@ public:
 
 public:
 	Camera(vec3 lookFrom, vec3 lookAt, vec3 vup,
-		float vfov, float aspect, float aperture, float dof)
+		   float vfov, float aspect, float aperture, float dof)
 	{
 		lensRadius = aperture / 2;
-		float theta = vfov * M_PI / 180;
+		float theta = vfov * M_PI / 180; // change degree to radian
 		float halfHeight = tan(theta / 2);
 		float halfWidth = aspect * halfHeight;
 		origin = lookFrom;
@@ -42,8 +42,6 @@ public:
 		vec3 offset = right * rd.x + up * rd.y;
 		return Ray(origin + offset, llc + s * horizontal + t * vertical - origin - offset);
 	}
-
-
 };
 
 #endif // CAMERA_H

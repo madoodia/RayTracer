@@ -25,7 +25,7 @@ struct HitRecord
 
 inline double randomDouble()
 {
-	return rand() / RAND_MAX + 1.0;
+	return rand() / (RAND_MAX + 1.0);
 }
 
 vec3 randomOnDisk()
