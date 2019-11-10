@@ -51,13 +51,13 @@ vec3 setColor(const Ray &ray, Hitable *world, int depth)
 
 Hitable *randomScene()
 {
-	int n = 500;
+	int n = 50000;
 	Hitable **list = new Hitable *[n + 1];
 	list[0] = new Sphere(vec3(0, -1000, 0), 1000, new Lambertian(vec3(0.5, 0.5, 0.5)));
 	int i = 1;
-	for (int a = -11; a < 11; a++)
+	for (int a = -10; a < 10; a++)
 	{
-		for (int b = -11; b < 11; b++)
+		for (int b = -10; b < 10; b++)
 		{
 			float chooseMat = randomDouble();
 			vec3 center(a + 0.9 * randomDouble(), 0.2, b + 0.9 * randomDouble());
@@ -65,14 +65,21 @@ Hitable *randomScene()
 			{
 				if (chooseMat < 0.8) // diffuse
 				{
-					list[i++] = new Sphere(center, 0.2,
-										   new Lambertian(vec3(randomDouble() * randomDouble(),
-															   randomDouble() * randomDouble(),
-															   randomDouble() * randomDouble())));
+					list[i++] = new MovingSphere(center, center + vec3(0, 0.5 * randomDouble(), 0),
+												 0.0, 1.0, 0.2,
+												 new Lambertian(
+													 vec3(randomDouble() * randomDouble(),
+														  randomDouble() * randomDouble(),
+														  randomDouble() * randomDouble())));
 				}
 				else if (chooseMat < 0.95) // metal
 				{
-					list[i++] = new Sphere(center, 0.2, new Metal(vec3(0.5 * (1 + randomDouble()), 0.5 * (1 + randomDouble()), 0.5 * (1 + randomDouble())), 0.5 * randomDouble()));
+					list[i++] = new Sphere(center, 0.2,
+										   new Metal(
+											   vec3(0.5 * (1 + randomDouble()),
+													0.5 * (1 + randomDouble()),
+													0.5 * (1 + randomDouble())),
+											   0.5 * randomDouble()));
 				}
 				else // glass
 				{
@@ -112,7 +119,11 @@ int main()
 		vec3 lookAt(0, 0, 0);
 		float aperture = 0.1;
 		float dof = 10.0;
-		Camera cam(lookFrom, lookAt, vec3(0, 1, 0), 20, float(nx) / float(ny), aperture, dof);
+		Camera cam(lookFrom, lookAt,
+				   vec3(0, 1, 0), 20,
+				   float(nx) / float(ny),
+				   aperture, dof,
+				   0.0, 1.0);
 		for (int j = ny - 1; j >= 0; j--)
 		{
 			for (int i = 0; i < nx; i++)

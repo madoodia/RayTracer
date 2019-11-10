@@ -8,13 +8,14 @@
 
 #include "material.h"
 
-class Dielectric :public Material
+class Dielectric : public Material
 {
 public:
 	float refIdx;
+
 public:
-	Dielectric(float ri) :refIdx(ri) {}
-	virtual bool scatter(const Ray& rayIn, const HitRecord& record, vec3& attenuation, Ray& scattered) const
+	Dielectric(float ri) : refIdx(ri) {}
+	virtual bool scatter(const Ray &rayIn, const HitRecord &record, vec3 &attenuation, Ray &scattered) const
 	{
 		vec3 outwardNormal;
 		vec3 reflected = reflect(rayIn.direction(), record.normal);
@@ -23,7 +24,7 @@ public:
 		vec3 refracted;
 		float reflectProb;
 		float cosine;
-		if(dot(rayIn.direction(), record.normal) > 0)
+		if (dot(rayIn.direction(), record.normal) > 0)
 		{
 			outwardNormal = -record.normal;
 			niOnt = refIdx;
@@ -37,7 +38,7 @@ public:
 			niOnt = 1.0 / refIdx;
 			cosine = -dot(rayIn.direction(), record.normal) / rayIn.direction().length();
 		}
-		if(refract(rayIn.direction(), outwardNormal, niOnt, refracted))
+		if (refract(rayIn.direction(), outwardNormal, niOnt, refracted))
 		{
 			reflectProb = schlick(cosine, refIdx);
 		}
@@ -45,13 +46,13 @@ public:
 		{
 			reflectProb = 1.0;
 		}
-		if(randomDouble() < reflectProb)
+		if (randomDouble() < reflectProb)
 		{
-			scattered = Ray(record.p, reflected);
+			scattered = Ray(record.p, reflected, rayIn.time());
 		}
 		else
 		{
-			scattered = Ray(record.p, refracted);
+			scattered = Ray(record.p, refracted, rayIn.time());
 		}
 		return true;
 	}

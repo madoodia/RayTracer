@@ -18,11 +18,15 @@ public:
 	vec3 vertical;
 	float lensRadius;
 	vec3 right, up, w;
+	float time0, time1;
 
 public:
 	Camera(vec3 lookFrom, vec3 lookAt, vec3 vup,
-		   float vfov, float aspect, float aperture, float dof)
+		   float vfov, float aspect,
+		   float aperture, float dof,
+		   float t0, float t1)
 	{
+		time0 = t0, time1 = t1;
 		lensRadius = aperture / 2;
 		float theta = vfov * M_PI / 180; // change degree to radian
 		float halfHeight = tan(theta / 2);
@@ -40,7 +44,8 @@ public:
 	{
 		vec3 rd = lensRadius * randomOnDisk();
 		vec3 offset = right * rd.x + up * rd.y;
-		return Ray(origin + offset, llc + s * horizontal + t * vertical - origin - offset);
+		float time = time0 + randomDouble() * (time1 - time0);
+		return Ray(origin + offset, llc + s * horizontal + t * vertical - origin - offset, time);
 	}
 };
 
