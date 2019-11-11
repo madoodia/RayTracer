@@ -5,8 +5,7 @@
 #ifndef AABB_H
 #define AABB_H
 
-#include "ray.h"
-#include "hitable.h"
+class Ray;
 
 inline float ffmin(float a, float b) { return a < b ? a : b; }
 inline float ffmax(float a, float b) { return a > b ? a : b; }

@@ -63,7 +63,7 @@ Hitable *randomScene()
 			vec3 center(a + 0.9 * randomDouble(), 0.2, b + 0.9 * randomDouble());
 			if ((center - vec3(4, 0.2, 0)).length() > 0.9)
 			{
-				if (chooseMat < 0.8) // diffuse
+				if (chooseMat < 0.5) // diffuse - motion blur
 				{
 					list[i++] = new MovingSphere(center, center + vec3(0, 0.5 * randomDouble(), 0),
 												 0.0, 1.0, 0.2,
@@ -71,6 +71,14 @@ Hitable *randomScene()
 													 vec3(randomDouble() * randomDouble(),
 														  randomDouble() * randomDouble(),
 														  randomDouble() * randomDouble())));
+				}
+				if (chooseMat < 0.8) // diffuse
+				{
+					list[i++] = new Sphere(center, 0.2,
+										   new Lambertian(
+											   vec3(randomDouble() * randomDouble(),
+													randomDouble() * randomDouble(),
+													randomDouble() * randomDouble())));
 				}
 				else if (chooseMat < 0.95) // metal
 				{
