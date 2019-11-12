@@ -127,7 +127,7 @@ Hitable *twoSpheres()
 
 Hitable *twoPerlinSpheres()
 {
-	Texture *perlinTexture = new NoiseTexture();
+	Texture *perlinTexture = new NoiseTexture(10);
 	Hitable **list = new Hitable *[2];
 	list[0] = new Sphere(vec3(0, -1000, 0), 1000, new Lambertian(perlinTexture));
 	list[1] = new Sphere(vec3(0, 2, 0), 2, new Lambertian(perlinTexture));
