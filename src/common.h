@@ -6,10 +6,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include <cstdlib>
-
 #include "vec3.h"
-
 
 #define M_PI 3.14159265359
 
@@ -20,7 +17,7 @@ struct HitRecord
 	float t;
 	vec3 p;
 	vec3 normal;
-	Material* matPtr;
+	Material *matPtr;
 };
 
 inline double randomDouble()
@@ -34,7 +31,7 @@ vec3 randomOnDisk()
 	do
 	{
 		p = 2.0 * vec3(randomDouble(), randomDouble(), 0) - vec3(1, 1, 0);
-	} while(dot(p, p) >= 1.0);
+	} while (dot(p, p) >= 1.0);
 	return p;
 }
 
@@ -44,21 +41,21 @@ vec3 randomOnSphere()
 	do
 	{
 		p = 2.0 * vec3(randomDouble(), randomDouble(), randomDouble()) - vec3(1, 1, 1);
-	} while(dot(p, p) >= 1.0);
+	} while (dot(p, p) >= 1.0);
 	return p;
 }
 
-vec3 reflect(const vec3& v, const vec3& n)
+vec3 reflect(const vec3 &v, const vec3 &n)
 {
 	return v - 2 * dot(v, n) * n;
 }
 
-bool refract(const vec3& v, const vec3& n, float niOnt, vec3& refracted)
+bool refract(const vec3 &v, const vec3 &n, float niOnt, vec3 &refracted)
 {
 	vec3 uv = v.normalize();
 	float dt = dot(uv, n);
 	float discreminant = 1.0 - niOnt * niOnt * (1 - dt * dt);
-	if(discreminant > 0)
+	if (discreminant > 0)
 	{
 		refracted = niOnt * (uv - n * dt) - n * sqrt(discreminant);
 		return true;

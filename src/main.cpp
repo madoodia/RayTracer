@@ -24,6 +24,7 @@
 #include "lambertian.h"
 #include "metal.h"
 #include "dielectric.h"
+#include "bvh.h"
 
 vec3 setColor(const Ray &ray, Hitable *world, int depth)
 {
@@ -101,7 +102,8 @@ Hitable *randomScene()
 	list[i++] = new Sphere(vec3(-4, 1, 0), 1.0, new Lambertian(vec3(0.4, 0.2, 0.1)));
 	list[i++] = new Sphere(vec3(4, 1, 0), 1.0, new Metal(vec3(0.7, 0.6, 0.5), 0.0));
 
-	return new HitableList(list, i);
+	// return new HitableList(list, i);
+	return new bvhNode(list, i, 0.0, 1.0); // using BVH method
 }
 
 int main()
@@ -112,8 +114,8 @@ int main()
 		Timer timer;
 		int nx = 1280;
 		int ny = 720;
-		int ns = 10;
-		std::cout << "Width: " << nx << "\nHeight: " << ny << std::endl;
+		int ns = 10; // samples
+		std::cout << "Width: " << nx << "\nHeight: " << ny << "\nSamples: " << ns << std::endl;
 
 		std::ofstream imageFile;
 		imageFile.open("output/outputImage.ppm");

@@ -23,17 +23,35 @@ public:
     vec3 min() const { return _min; }
     vec3 max() const { return _max; }
 
-    bool hit(const Ray &r, float tmin, float tmax) const
+    // bool hit(const Ray &r, float tmin, float tmax) const
+    // {
+    //     for (int a = 0; a < 3; a++)
+    //     {
+    //         float t0 = ffmin((_min[a] - r.origin()[a]) / r.direction()[a],
+    //                          (_max[a] - r.origin()[a]) / r.direction()[a]);
+    //         float t1 = ffmax((_min[a] - r.origin()[a]) / r.direction()[a],
+    //                          (_max[a] - r.origin()[a]) / r.direction()[a]);
+
+    //         tmin = ffmin(t0, tmin);
+    //         tmax = ffmax(t1, tmax);
+    //         if (tmax <= tmin)
+    //             return false;
+    //     }
+    //     return true;
+    // }
+
+    // Andrew Kensler Method
+    inline bool AABB::hit(const Ray &r, float tmin, float tmax) const
     {
         for (int a = 0; a < 3; a++)
         {
-            float t0 = ffmin((_min[a] - r.origin()[a]) / r.direction()[a],
-                             (_max[a] - r.origin()[a]) / r.direction()[a]);
-            float t1 = ffmax((_min[a] - r.origin()[a]) / r.direction()[a],
-                             (_max[a] - r.origin()[a]) / r.direction()[a]);
-
-            tmin = ffmin(t0, tmin);
-            tmax = ffmax(t1, tmax);
+            float invD = 1.0f / r.direction()[a];
+            float t0 = (min()[a] - r.origin()[a]) * invD;
+            float t1 = (max()[a] - r.origin()[a]) * invD;
+            if (invD < 0.0f)
+                std::swap(t0, t1);
+            tmin = t0 > tmin ? t0 : tmin;
+            tmax = t1 < tmax ? t1 : tmax;
             if (tmax <= tmin)
                 return false;
         }
