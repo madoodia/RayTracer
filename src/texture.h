@@ -52,7 +52,7 @@ public:
 class NoiseTexture : public Texture
 {
 public:
-    NoiseTexture() {}
+    NoiseTexture() : scale(1.0) {}
     NoiseTexture(float sc) : scale(sc) {}
     virtual vec3 value(float u, float v, const vec3 &p) const
     {

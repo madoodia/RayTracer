@@ -145,7 +145,9 @@ int main()
 		int nx = 640;
 		int ny = 360;
 		int ns = 10; // samples
+
 		std::cout << "Width: " << nx << "\nHeight: " << ny << "\nSamples: " << ns << std::endl;
+		std::cout << "\nRendering...\n";
 
 		std::ofstream imageFile;
 		imageFile.open("output/outputImage.ppm");
