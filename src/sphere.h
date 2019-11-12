@@ -47,6 +47,7 @@ bool Sphere::hit(const Ray &ray, float tMin, float tMax,
 		{
 			record.t = temp;
 			record.p = ray.pFunction(record.t);
+			getSphereUV((record.p - center) / radius, record.u, record.v);
 			record.normal = (record.p - center) / radius;
 			record.matPtr = material;
 			return true;
@@ -56,6 +57,7 @@ bool Sphere::hit(const Ray &ray, float tMin, float tMax,
 		{
 			record.t = temp;
 			record.p = ray.pFunction(record.t);
+			getSphereUV((record.p - center) / radius, record.u, record.v);
 			record.normal = (record.p - center) / radius;
 			record.matPtr = material;
 			return true;

@@ -21,11 +21,11 @@
 #include "hitableList.h"
 #include "camera.h"
 #include "material.h"
-#include "lambertian.h"
-#include "metal.h"
-#include "dielectric.h"
 #include "bvh.h"
 #include "texture.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 vec3 setColor(const Ray &ray, Hitable *world, int depth)
 {
@@ -111,7 +111,7 @@ Hitable *randomScene()
 	return new bvhNode(list, i, 0.0, 1.0); // using BVH method
 }
 
-Hitable *twoSpheres()
+Hitable *twoSpheresScene()
 {
 	Texture *checker = new CheckerTexture(
 		new ConstantTexture(vec3(0.2, 0.3, 0.1)),
@@ -125,7 +125,7 @@ Hitable *twoSpheres()
 	// return new bvhNode(list, 2, 0.0, 1.0); // using BVH method
 }
 
-Hitable *twoPerlinSpheres()
+Hitable *twoPerlinSpheresScene()
 {
 	Texture *perlinTexture = new NoiseTexture(2.5);
 	Hitable **list = new Hitable *[2];
@@ -134,6 +134,24 @@ Hitable *twoPerlinSpheres()
 
 	return new HitableList(list, 2);
 	// return new bvhNode(list, 2, 0.0, 1.0); // using BVH method
+}
+
+Hitable *earthScene()
+{
+	int nx, ny, nn;
+	//unsigned char *texData = stbi_load("tiled.jpg", &nx, &ny, &nn, 0);
+	unsigned char *texData = stbi_load("src/earthmap.jpg", &nx, &ny, &nn, 0);
+	Material *mat = new Lambertian(new ImageTexture(texData, nx, ny));
+	return new Sphere(vec3(0, 0, 0), 2, mat);
+}
+
+Hitable *moonScene()
+{
+	int nx, ny, nn;
+	//unsigned char *texData = stbi_load("tiled.jpg", &nx, &ny, &nn, 0);
+	unsigned char *texData = stbi_load("src/moonmap.jpg", &nx, &ny, &nn, 0);
+	Material *mat = new Lambertian(new ImageTexture(texData, nx, ny));
+	return new Sphere(vec3(0, 0, 0), 2, mat);
 }
 
 int main()
@@ -156,8 +174,10 @@ int main()
 				  << nx << " " << ny << "\n255\n";
 
 		// Hitable *world = randomScene();
-		// Hitable *world = twoSpheres();
-		Hitable *world = twoPerlinSpheres();
+		// Hitable *world = twoSpheresScene();
+		// Hitable *world = twoPerlinSpheresScene();
+		// Hitable *world = earthScene();
+		Hitable *world = moonScene();
 
 		vec3 lookFrom(13, 2, 3);
 		vec3 lookAt(0, 0, 0);
