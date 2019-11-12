@@ -12,7 +12,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include "vec3.h"
+#include "perlin.h"
 
 class Texture
 {
@@ -47,6 +47,17 @@ public:
     }
     Texture *odd;
     Texture *even;
+};
+
+class NoiseTexture : public Texture
+{
+public:
+    NoiseTexture() {}
+    virtual vec3 value(float u, float v, const vec3 &p) const
+    {
+        return vec3(1, 1, 1) * noise.noise(p);
+    }
+    Perlin noise;
 };
 
 #endif // TEXTURE_H

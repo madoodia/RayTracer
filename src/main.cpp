@@ -116,11 +116,24 @@ Hitable *twoSpheres()
 	Texture *checker = new CheckerTexture(
 		new ConstantTexture(vec3(0.2, 0.3, 0.1)),
 		new ConstantTexture(vec3(0.9, 0.9, 0.9)));
-	int n = 50;
+	int n = 2;
 	Hitable **list = new Hitable *[n + 1];
 	list[0] = new Sphere(vec3(0, -10, 0), 10, new Lambertian(checker));
 	list[1] = new Sphere(vec3(0, 10, 0), 10, new Lambertian(checker));
+
 	return new HitableList(list, 2);
+	// return new bvhNode(list, 2, 0.0, 1.0); // using BVH method
+}
+
+Hitable *twoPerlinSpheres()
+{
+	Texture *perlinTexture = new NoiseTexture();
+	Hitable **list = new Hitable *[2];
+	list[0] = new Sphere(vec3(0, -1000, 0), 1000, new Lambertian(perlinTexture));
+	list[1] = new Sphere(vec3(0, 2, 0), 2, new Lambertian(perlinTexture));
+
+	return new HitableList(list, 2);
+	// return new bvhNode(list, 2, 0.0, 1.0); // using BVH method
 }
 
 int main()
@@ -129,8 +142,8 @@ int main()
 	// inline functions and regular functions.
 	{
 		Timer timer;
-		int nx = 1280;
-		int ny = 720;
+		int nx = 640;
+		int ny = 360;
 		int ns = 10; // samples
 		std::cout << "Width: " << nx << "\nHeight: " << ny << "\nSamples: " << ns << std::endl;
 
@@ -140,14 +153,15 @@ int main()
 		imageFile << "P3\n"
 				  << nx << " " << ny << "\n255\n";
 
-		Hitable *world = randomScene();
+		// Hitable *world = randomScene();
 		// Hitable *world = twoSpheres();
+		Hitable *world = twoPerlinSpheres();
 
 		vec3 lookFrom(13, 2, 3);
 		vec3 lookAt(0, 0, 0);
-		float aperture = 0.1;
+		// float aperture = 0.1;
 		// float aperture = 0.5; // more blury
-		// float aperture = 0.0; // no blur
+		float aperture = 0.0; // no blur
 		float dof = 10.0;
 		Camera cam(lookFrom, lookAt,
 				   vec3(0, 1, 0), 20,

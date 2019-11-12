@@ -13,64 +13,66 @@ inline float ffmax(float a, float b) { return a > b ? a : b; }
 class AABB
 {
 public:
-    vec3 _min;
-    vec3 _max;
+	vec3 _min;
+	vec3 _max;
 
 public:
-    AABB() {}
-    AABB(const vec3 &a, const vec3 &b) { _min = a, _max = b; }
+	AABB() {}
+	AABB(const vec3 &a, const vec3 &b) { _min = a, _max = b; }
 
-    vec3 min() const { return _min; }
-    vec3 max() const { return _max; }
+	vec3 min() const { return _min; }
+	vec3 max() const { return _max; }
 
-    // bool hit(const Ray &r, float tmin, float tmax) const
-    // {
-    //     for (int a = 0; a < 3; a++)
-    //     {
-    //         float t0 = ffmin((_min[a] - r.origin()[a]) / r.direction()[a],
-    //                          (_max[a] - r.origin()[a]) / r.direction()[a]);
-    //         float t1 = ffmax((_min[a] - r.origin()[a]) / r.direction()[a],
-    //                          (_max[a] - r.origin()[a]) / r.direction()[a]);
+	bool hit(const Ray &r, float tmin, float tmax) const;
 
-    //         tmin = ffmin(t0, tmin);
-    //         tmax = ffmax(t1, tmax);
-    //         if (tmax <= tmin)
-    //             return false;
-    //     }
-    //     return true;
-    // }
+	// bool hit(const Ray &r, float tmin, float tmax) const
+	// {
+	//     for (int a = 0; a < 3; a++)
+	//     {
+	//         float t0 = ffmin((_min[a] - r.origin()[a]) / r.direction()[a],
+	//                          (_max[a] - r.origin()[a]) / r.direction()[a]);
+	//         float t1 = ffmax((_min[a] - r.origin()[a]) / r.direction()[a],
+	//                          (_max[a] - r.origin()[a]) / r.direction()[a]);
 
-    // Andrew Kensler Method
-    inline bool AABB::hit(const Ray &r, float tmin, float tmax) const
-    {
-        for (int a = 0; a < 3; a++)
-        {
-            float invD = 1.0f / r.direction()[a];
-            float t0 = (min()[a] - r.origin()[a]) * invD;
-            float t1 = (max()[a] - r.origin()[a]) * invD;
-            if (invD < 0.0f)
-                std::swap(t0, t1);
-            tmin = t0 > tmin ? t0 : tmin;
-            tmax = t1 < tmax ? t1 : tmax;
-            if (tmax <= tmin)
-                return false;
-        }
-        return true;
-    }
+	//         tmin = ffmin(t0, tmin);
+	//         tmax = ffmax(t1, tmax);
+	//         if (tmax <= tmin)
+	//             return false;
+	//     }
+	//     return true;
+	// }
 };
+
+// Andrew Kensler Method
+inline bool AABB::hit(const Ray &r, float tmin, float tmax) const
+{
+	for (int a = 0; a < 3; a++)
+	{
+		float invD = 1.0f / r.direction()[a];
+		float t0 = (min()[a] - r.origin()[a]) * invD;
+		float t1 = (max()[a] - r.origin()[a]) * invD;
+		if (invD < 0.0f)
+			std::swap(t0, t1);
+		tmin = t0 > tmin ? t0 : tmin;
+		tmax = t1 < tmax ? t1 : tmax;
+		if (tmax <= tmin)
+			return false;
+	}
+	return true;
+}
 
 AABB surroundingBox(AABB box0, AABB box1)
 {
-    vec3 small(
-        ffmin(box0.min().x, box1.min().x),
-        ffmin(box0.min().y, box1.min().y),
-        ffmin(box0.min().z, box1.min().z));
-    vec3 big(
-        ffmax(box0.max().x, box1.max().x),
-        ffmax(box0.max().y, box1.max().y),
-        ffmax(box0.max().z, box1.max().z));
+	vec3 small(
+		ffmin(box0.min().x, box1.min().x),
+		ffmin(box0.min().y, box1.min().y),
+		ffmin(box0.min().z, box1.min().z));
+	vec3 big(
+		ffmax(box0.max().x, box1.max().x),
+		ffmax(box0.max().y, box1.max().y),
+		ffmax(box0.max().z, box1.max().z));
 
-    return AABB(small, big);
+	return AABB(small, big);
 }
 
 #endif //AABB_H
