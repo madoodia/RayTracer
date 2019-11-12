@@ -12,17 +12,17 @@
 #ifndef BVHH
 #define BVHH
 
-#include "hitable.h"
+#include "hittable.h"
 
-class bvhNode : public Hitable
+class bvhNode : public Hittable
 {
 public:
     bvhNode() {}
-    bvhNode(Hitable **l, int n, float time0, float time1);
+    bvhNode(Hittable **l, int n, float time0, float time1);
     virtual bool hit(const Ray &ray, float tMin, float tMax, HitRecord &record) const;
     virtual bool boundingBox(float t0, float t1, AABB &box) const;
-    Hitable *left;
-    Hitable *right;
+    Hittable *left;
+    Hittable *right;
     AABB box;
 };
 
@@ -67,8 +67,8 @@ bool bvhNode::hit(const Ray &ray, float tMin, float tMax, HitRecord &record) con
 int boxXCompare(const void *a, const void *b)
 {
     AABB boxLeft, boxRight;
-    Hitable *ah = *(Hitable **)a;
-    Hitable *bh = *(Hitable **)b;
+    Hittable *ah = *(Hittable **)a;
+    Hittable *bh = *(Hittable **)b;
     if (!ah->boundingBox(0, 0, boxLeft) || !bh->boundingBox(0, 0, boxRight))
         std::cerr << "no bounding box in bvhNode constructor\n";
     if (boxLeft.min().x - boxRight.min().x < 0.0)
@@ -80,8 +80,8 @@ int boxXCompare(const void *a, const void *b)
 int boxYCompare(const void *a, const void *b)
 {
     AABB boxLeft, boxRight;
-    Hitable *ah = *(Hitable **)a;
-    Hitable *bh = *(Hitable **)b;
+    Hittable *ah = *(Hittable **)a;
+    Hittable *bh = *(Hittable **)b;
     if (!ah->boundingBox(0, 0, boxLeft) || !bh->boundingBox(0, 0, boxRight))
         std::cerr << "no bounding box in bvhNode constructor\n";
     if (boxLeft.min().y - boxRight.min().y < 0.0)
@@ -92,8 +92,8 @@ int boxYCompare(const void *a, const void *b)
 int boxZCompare(const void *a, const void *b)
 {
     AABB boxLeft, boxRight;
-    Hitable *ah = *(Hitable **)a;
-    Hitable *bh = *(Hitable **)b;
+    Hittable *ah = *(Hittable **)a;
+    Hittable *bh = *(Hittable **)b;
     if (!ah->boundingBox(0, 0, boxLeft) || !bh->boundingBox(0, 0, boxRight))
         std::cerr << "no bounding box in bvhNode constructor\n";
     if (boxLeft.min().z - boxRight.min().z < 0.0)
@@ -102,15 +102,15 @@ int boxZCompare(const void *a, const void *b)
         return 1;
 }
 
-bvhNode::bvhNode(Hitable **l, int n, float time0, float time1)
+bvhNode::bvhNode(Hittable **l, int n, float time0, float time1)
 {
     int axis = int(3 * randomDouble());
     if (axis == 0)
-        qsort(l, n, sizeof(Hitable *), boxXCompare);
+        qsort(l, n, sizeof(Hittable *), boxXCompare);
     else if (axis == 1)
-        qsort(l, n, sizeof(Hitable *), boxYCompare);
+        qsort(l, n, sizeof(Hittable *), boxYCompare);
     else
-        qsort(l, n, sizeof(Hitable *), boxZCompare);
+        qsort(l, n, sizeof(Hittable *), boxZCompare);
     if (n == 1)
     {
         left = right = l[0];

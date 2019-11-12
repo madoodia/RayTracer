@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" 
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -30,8 +31,8 @@
     <ClInclude Include="..\src\camera.h" />
     <ClInclude Include="..\src\common.h" />
     <ClInclude Include="..\src\dielectric.h" />
-    <ClInclude Include="..\src\hitable.h" />
-    <ClInclude Include="..\src\hitableList.h" />
+    <ClInclude Include="..\src\hittable.h" />
+    <ClInclude Include="..\src\hittableList.h" />
     <ClInclude Include="..\src\lambertian.h" />
     <ClInclude Include="..\src\material.h" />
     <ClInclude Include="..\src\metal.h" />

@@ -18,43 +18,51 @@
 #include "common.h"
 #include "myTimer.h"
 #include "sphere.h"
-#include "hitableList.h"
+#include "hittableList.h"
 #include "camera.h"
 #include "material.h"
 #include "bvh.h"
 #include "texture.h"
+#include "rectangle.h"
+#include "flipNormal.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-vec3 setColor(const Ray &ray, Hitable *world, int depth)
+vec3 setColor(const Ray &ray, Hittable *world, int depth)
 {
 	HitRecord record;
 	if (world->hit(ray, 0.001, FLT_MAX, record))
 	{
 		Ray scattered;
 		vec3 attenuation;
+		vec3 emitted = record.matPtr->emitted(record.u, record.v, record.p);
 		if (depth < 50 && record.matPtr->scatter(ray, record, attenuation, scattered))
 		{
-			return attenuation * setColor(scattered, world, depth + 1); // recursive
+			return emitted + attenuation * setColor(scattered, world, depth + 1); // recursive
 		}
 		else
 		{
-			return vec3(0, 0, 0);
+			return emitted;
 		}
 	}
 	else
 	{
-		vec3 unit = ray.direction().normalize();
-		float t = 0.5 * (unit.y + 1.0);
-		return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+		return vec3(0, 0, 0);
 	}
+
+	// else
+	// {
+	// 	vec3 unit = ray.direction().normalize();
+	// 	float t = 0.5 * (unit.y + 1.0);
+	// 	return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+	// }
 }
 
-Hitable *randomScene()
+Hittable *randomScene()
 {
 	int n = 50000;
-	Hitable **list = new Hitable *[n + 1];
+	Hittable **list = new Hittable *[n + 1];
 	Texture *checker = new CheckerTexture(
 		new ConstantTexture(vec3(0.2, 0.3, 0.1)),
 		new ConstantTexture(vec3(0.9, 0.9, 0.9)));
@@ -107,36 +115,36 @@ Hitable *randomScene()
 	list[i++] = new Sphere(vec3(-4, 1, 0), 1.0, new Lambertian(new ConstantTexture(vec3(0.4, 0.2, 0.1))));
 	list[i++] = new Sphere(vec3(4, 1, 0), 1.0, new Metal(vec3(0.7, 0.6, 0.5), 0.0));
 
-	// return new HitableList(list, i);
+	// return new HittableList(list, i);
 	return new bvhNode(list, i, 0.0, 1.0); // using BVH method
 }
 
-Hitable *twoSpheresScene()
+Hittable *twoSpheresScene()
 {
 	Texture *checker = new CheckerTexture(
 		new ConstantTexture(vec3(0.2, 0.3, 0.1)),
 		new ConstantTexture(vec3(0.9, 0.9, 0.9)));
 	int n = 2;
-	Hitable **list = new Hitable *[n + 1];
+	Hittable **list = new Hittable *[n + 1];
 	list[0] = new Sphere(vec3(0, -10, 0), 10, new Lambertian(checker));
 	list[1] = new Sphere(vec3(0, 10, 0), 10, new Lambertian(checker));
 
-	return new HitableList(list, 2);
+	return new HittableList(list, 2);
 	// return new bvhNode(list, 2, 0.0, 1.0); // using BVH method
 }
 
-Hitable *twoPerlinSpheresScene()
+Hittable *twoPerlinSpheresScene()
 {
 	Texture *perlinTexture = new NoiseTexture(2.5);
-	Hitable **list = new Hitable *[2];
+	Hittable **list = new Hittable *[2];
 	list[0] = new Sphere(vec3(0, -1000, 0), 1000, new Lambertian(perlinTexture));
 	list[1] = new Sphere(vec3(0, 2, 0), 2, new Lambertian(perlinTexture));
 
-	return new HitableList(list, 2);
+	return new HittableList(list, 2);
 	// return new bvhNode(list, 2, 0.0, 1.0); // using BVH method
 }
 
-Hitable *earthScene()
+Hittable *earthScene()
 {
 	int nx, ny, nn;
 	//unsigned char *texData = stbi_load("tiled.jpg", &nx, &ny, &nn, 0);
@@ -145,7 +153,7 @@ Hitable *earthScene()
 	return new Sphere(vec3(0, 0, 0), 2, mat);
 }
 
-Hitable *moonScene()
+Hittable *moonScene()
 {
 	int nx, ny, nn;
 	//unsigned char *texData = stbi_load("tiled.jpg", &nx, &ny, &nn, 0);
@@ -154,15 +162,48 @@ Hitable *moonScene()
 	return new Sphere(vec3(0, 0, 0), 2, mat);
 }
 
+Hittable *simpleLightScene()
+{
+	Texture *pertext = new NoiseTexture(4);
+	Hittable **list = new Hittable *[4];
+	list[0] = new Sphere(vec3(0, -1000, 0), 1000, new Lambertian(pertext));
+	list[1] = new Sphere(vec3(0, 2, 0), 2, new Lambertian(pertext));
+	list[2] = new Sphere(vec3(0, 7, 0), 2,
+						 new DiffuseLight(new ConstantTexture(vec3(4, 4, 4))));
+	list[3] = new XYRect(3, 5, 1, 3, -2,
+						 new DiffuseLight(new ConstantTexture(vec3(4, 4, 4))));
+	return new HittableList(list, 4);
+}
+
+Hittable *cornellBoxScene()
+{
+	Hittable **list = new Hittable *[6];
+	int i = 0;
+	Material *red = new Lambertian(new ConstantTexture(vec3(0.65, 0.05, 0.05)));
+	Material *white = new Lambertian(new ConstantTexture(vec3(0.73, 0.73, 0.73)));
+	Material *green = new Lambertian(new ConstantTexture(vec3(0.12, 0.45, 0.15)));
+	Material *light = new DiffuseLight(new ConstantTexture(vec3(15, 15, 15)));
+
+	list[i++] = new FlipNormal(new YZRect(0, 555, 0, 555, 555, green));
+	list[i++] = new YZRect(0, 555, 0, 555, 0, red);
+	list[i++] = new XZRect(213, 343, 227, 332, 554, light);
+	list[i++] = new FlipNormal(new XZRect(0, 555, 0, 555, 555, white));
+	list[i++] = new XZRect(0, 555, 0, 555, 0, white);
+	list[i++] = new FlipNormal(new XYRect(0, 555, 0, 555, 555, white));
+
+	return new HittableList(list, i);
+	// return new bvhNode(list, i, 0.0, 1.0); // using BVH method (took longer)
+}
+
 int main()
 {
 	// Calculate Time for running the code
 	// inline functions and regular functions.
 	{
 		Timer timer;
-		int nx = 640;
-		int ny = 360;
-		int ns = 10; // samples
+		int nx = 800;
+		int ny = 800;
+		int ns = 100; // samples
 
 		std::cout << "Width: " << nx << "\nHeight: " << ny << "\nSamples: " << ns << std::endl;
 		std::cout << "\nRendering...\n";
@@ -173,20 +214,24 @@ int main()
 		imageFile << "P3\n"
 				  << nx << " " << ny << "\n255\n";
 
-		// Hitable *world = randomScene();
-		// Hitable *world = twoSpheresScene();
-		// Hitable *world = twoPerlinSpheresScene();
-		// Hitable *world = earthScene();
-		Hitable *world = moonScene();
+		// Hittable *world = randomScene();
+		// Hittable *world = twoSpheresScene();
+		// Hittable *world = twoPerlinSpheresScene();
+		// Hittable *world = earthScene();
+		// Hittable *world = moonScene();
+		// Hittable *world = simpleLightScene();
+		Hittable *world = cornellBoxScene();
 
-		vec3 lookFrom(13, 2, 3);
-		vec3 lookAt(0, 0, 0);
+		// vec3 lookFrom(13, 2, 3);
+		vec3 lookFrom(278, 278, -800);
+		vec3 lookAt(278, 278, 0);
 		// float aperture = 0.1;
 		// float aperture = 0.5; // more blury
 		float aperture = 0.0; // no blur
 		float dof = 10.0;
+		float vfov = 40.0;
 		Camera cam(lookFrom, lookAt,
-				   vec3(0, 1, 0), 20,
+				   vec3(0, 1, 0), vfov,
 				   float(nx) / float(ny),
 				   aperture, dof,
 				   0.0, 1.0);

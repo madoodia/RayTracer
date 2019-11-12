@@ -17,3 +17,4 @@ ECHO ---= Building is finished! =---
 
 Pause
 cls
+CALL %FOLDER_NAME%.exe

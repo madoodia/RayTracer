@@ -6,11 +6,11 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include "hitable.h"
+#include "hittable.h"
 
 class Material;
 
-class Sphere : public Hitable
+class Sphere : public Hittable
 {
 public:
 	vec3 center;
@@ -66,7 +66,7 @@ bool Sphere::hit(const Ray &ray, float tMin, float tMax,
 	return false;
 }
 
-class MovingSphere : public Hitable
+class MovingSphere : public Hittable
 {
 public:
 	float time0, time1;
