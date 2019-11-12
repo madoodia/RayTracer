@@ -7,19 +7,20 @@
 #define LAMBERTIAN_H
 
 #include "material.h"
+#include "texture.h"
 
 class Lambertian : public Material
 {
 public:
-	vec3 albedo;
+	Texture *albedo;
 
 public:
-	Lambertian(const vec3 &a) : albedo(a) {}
+	Lambertian(Texture *a) : albedo(a) {}
 	virtual bool scatter(const Ray &rayIn, const HitRecord &record, vec3 &attenuation, Ray &scattered) const
 	{
 		vec3 target = record.p + record.normal + randomOnSphere();
 		scattered = Ray(record.p, target - record.p, rayIn.time());
-		attenuation = albedo;
+		attenuation = albedo->value(0, 0, record.p);
 		return true;
 	}
 };

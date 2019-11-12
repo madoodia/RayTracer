@@ -25,6 +25,7 @@
 #include "metal.h"
 #include "dielectric.h"
 #include "bvh.h"
+#include "texture.h"
 
 vec3 setColor(const Ray &ray, Hitable *world, int depth)
 {
@@ -54,7 +55,11 @@ Hitable *randomScene()
 {
 	int n = 50000;
 	Hitable **list = new Hitable *[n + 1];
-	list[0] = new Sphere(vec3(0, -1000, 0), 1000, new Lambertian(vec3(0.5, 0.5, 0.5)));
+	Texture *checker = new CheckerTexture(
+		new ConstantTexture(vec3(0.2, 0.3, 0.1)),
+		new ConstantTexture(vec3(0.9, 0.9, 0.9)));
+	list[0] = new Sphere(vec3(0, -1000, 0), 1000, new Lambertian(checker));
+
 	int i = 1;
 	for (int a = -10; a < 10; a++)
 	{
@@ -68,18 +73,18 @@ Hitable *randomScene()
 				{
 					list[i++] = new MovingSphere(center, center + vec3(0, 0.5 * randomDouble(), 0),
 												 0.0, 1.0, 0.2,
-												 new Lambertian(
+												 new Lambertian(new ConstantTexture(
 													 vec3(randomDouble() * randomDouble(),
 														  randomDouble() * randomDouble(),
-														  randomDouble() * randomDouble())));
+														  randomDouble() * randomDouble()))));
 				}
 				if (chooseMat < 0.8) // diffuse
 				{
 					list[i++] = new Sphere(center, 0.2,
-										   new Lambertian(
+										   new Lambertian(new ConstantTexture(
 											   vec3(randomDouble() * randomDouble(),
 													randomDouble() * randomDouble(),
-													randomDouble() * randomDouble())));
+													randomDouble() * randomDouble()))));
 				}
 				else if (chooseMat < 0.95) // metal
 				{
@@ -99,11 +104,23 @@ Hitable *randomScene()
 	}
 
 	list[i++] = new Sphere(vec3(0, 1, 0), 1.0, new Dielectric(1.5));
-	list[i++] = new Sphere(vec3(-4, 1, 0), 1.0, new Lambertian(vec3(0.4, 0.2, 0.1)));
+	list[i++] = new Sphere(vec3(-4, 1, 0), 1.0, new Lambertian(new ConstantTexture(vec3(0.4, 0.2, 0.1))));
 	list[i++] = new Sphere(vec3(4, 1, 0), 1.0, new Metal(vec3(0.7, 0.6, 0.5), 0.0));
 
 	// return new HitableList(list, i);
 	return new bvhNode(list, i, 0.0, 1.0); // using BVH method
+}
+
+Hitable *twoSpheres()
+{
+	Texture *checker = new CheckerTexture(
+		new ConstantTexture(vec3(0.2, 0.3, 0.1)),
+		new ConstantTexture(vec3(0.9, 0.9, 0.9)));
+	int n = 50;
+	Hitable **list = new Hitable *[n + 1];
+	list[0] = new Sphere(vec3(0, -10, 0), 10, new Lambertian(checker));
+	list[1] = new Sphere(vec3(0, 10, 0), 10, new Lambertian(checker));
+	return new HitableList(list, 2);
 }
 
 int main()
@@ -124,10 +141,13 @@ int main()
 				  << nx << " " << ny << "\n255\n";
 
 		Hitable *world = randomScene();
+		// Hitable *world = twoSpheres();
 
 		vec3 lookFrom(13, 2, 3);
 		vec3 lookAt(0, 0, 0);
 		float aperture = 0.1;
+		// float aperture = 0.5; // more blury
+		// float aperture = 0.0; // no blur
 		float dof = 10.0;
 		Camera cam(lookFrom, lookAt,
 				   vec3(0, 1, 0), 20,
