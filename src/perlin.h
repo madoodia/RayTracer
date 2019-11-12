@@ -69,6 +69,20 @@ public:
         return perlinInterp(c, u, v, w);
     }
 
+    float turb(const vec3 &p, int depth = 7) const
+    {
+        float accum = 0;
+        vec3 tempP = p;
+        float weight = 1.0;
+        for (int i = 0; i < depth; i++)
+        {
+            accum += weight * noise(tempP);
+            weight *= 0.5;
+            tempP *= 2;
+        }
+        return fabs(accum);
+    }
+
     static vec3 *ranvec;
     static int *permX;
     static int *permY;
