@@ -1,3 +1,8 @@
+// madoodia@gmail.com
+// (C) 2019
+// All rights reserved.
+// ------------------
+
 #ifndef MYTIMER_H
 #define MYTIMER_H
 

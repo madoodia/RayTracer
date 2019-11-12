@@ -1,16 +1,10 @@
-//==================================================================================================
-// Written in 2016 by Peter Shirley <ptrshrl@gmail.com>
-//
-// To the extent possible under law, the author(s) have dedicated all copyright and related and
-// neighboring rights to this software to the public domain worldwide. This software is distributed
-// without any warranty.
-//
-// You should have received a copy (see file COPYING.txt) of the CC0 Public Domain Dedication along
-// with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
-//==================================================================================================
+// madoodia@gmail.com
+// (C) 2019
+// All rights reserved.
+// ------------------
 
-#ifndef BVHH
-#define BVHH
+#ifndef BVH_H
+#define BVH_H
 
 #include "hittable.h"
 
@@ -131,4 +125,4 @@ bvhNode::bvhNode(Hittable **l, int n, float time0, float time1)
     box = surroundingBox(boxLeft, boxRight);
 }
 
-#endif
+#endif // BVH_H

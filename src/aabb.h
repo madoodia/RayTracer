@@ -2,6 +2,7 @@
 // (C) 2019
 // All rights reserved.
 // ------------------
+
 #ifndef AABB_H
 #define AABB_H
 

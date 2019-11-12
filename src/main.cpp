@@ -25,6 +25,7 @@
 #include "texture.h"
 #include "rectangle.h"
 #include "flipNormal.h"
+#include "box.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -195,6 +196,29 @@ Hittable *cornellBoxScene()
 	// return new bvhNode(list, i, 0.0, 1.0); // using BVH method (took longer)
 }
 
+Hittable *cornellBox2Scene()
+{
+	Hittable **list = new Hittable *[6];
+	int i = 0;
+	Material *red = new Lambertian(new ConstantTexture(vec3(0.65, 0.05, 0.05)));
+	Material *white = new Lambertian(new ConstantTexture(vec3(0.73, 0.73, 0.73)));
+	Material *green = new Lambertian(new ConstantTexture(vec3(0.12, 0.45, 0.15)));
+	Material *light = new DiffuseLight(new ConstantTexture(vec3(15, 15, 15)));
+
+	list[i++] = new FlipNormal(new YZRect(0, 555, 0, 555, 555, green));
+	list[i++] = new YZRect(0, 555, 0, 555, 0, red);
+	list[i++] = new XZRect(213, 343, 227, 332, 554, light);
+	list[i++] = new FlipNormal(new XZRect(0, 555, 0, 555, 555, white));
+	list[i++] = new XZRect(0, 555, 0, 555, 0, white);
+	list[i++] = new FlipNormal(new XYRect(0, 555, 0, 555, 555, white));
+
+	list[i++] = new Box(vec3(130, 0, 65), vec3(295, 165, 230), white);
+	list[i++] = new Box(vec3(265, 0, 295), vec3(430, 330, 460), white);
+
+	return new HittableList(list, i);
+	// return new bvhNode(list, i, 0.0, 1.0); // using BVH method (took longer)
+}
+
 int main()
 {
 	// Calculate Time for running the code
@@ -203,7 +227,7 @@ int main()
 		Timer timer;
 		int nx = 800;
 		int ny = 800;
-		int ns = 100; // samples
+		int ns = 10; // samples
 
 		std::cout << "Width: " << nx << "\nHeight: " << ny << "\nSamples: " << ns << std::endl;
 		std::cout << "\nRendering...\n";
@@ -220,7 +244,8 @@ int main()
 		// Hittable *world = earthScene();
 		// Hittable *world = moonScene();
 		// Hittable *world = simpleLightScene();
-		Hittable *world = cornellBoxScene();
+		// Hittable *world = cornellBoxScene();
+		Hittable *world = cornellBox2Scene();
 
 		// vec3 lookFrom(13, 2, 3);
 		vec3 lookFrom(278, 278, -800);
