@@ -76,9 +76,9 @@ public:
 		{
 			outwardNormal = -record.normal;
 			niOnt = refIdx;
-			//cosine = refIdx * dot(rayIn.direction(), record.normal) / rayIn.direction().length();
-			cosine = dot(rayIn.direction(), record.normal) / rayIn.direction().length();
-			cosine = sqrt(1 - refIdx * refIdx * (1 - cosine * cosine));
+			cosine = refIdx * dot(rayIn.direction(), record.normal) / rayIn.direction().length();
+			// cosine = dot(rayIn.direction(), record.normal) / rayIn.direction().length();
+			// cosine = sqrt(1 - refIdx * refIdx * (1 - cosine * cosine));
 		}
 		else
 		{
@@ -92,6 +92,7 @@ public:
 		}
 		else
 		{
+			scattered = Ray(record.p, reflected, rayIn.time());
 			reflectProb = 1.0;
 		}
 		if (randomDouble() < reflectProb)
