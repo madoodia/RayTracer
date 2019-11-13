@@ -6,15 +6,15 @@
 // PPM Viewer: http://web.eecs.utk.edu/~smarz1/pgmview/
 
 // C++ Headers
-
-// Third Party Headers
-
-// Own Headers
-
 #include <iostream>
 #include <fstream>
 #include <float.h>
 
+// Third Party Headers
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+// Own Headers
 #include "common.h"
 #include "myTimer.h"
 #include "sphere.h"
@@ -28,9 +28,6 @@
 #include "box.h"
 #include "transformation.h"
 #include "volume.h"
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
 vec3 setColor(const Ray &ray, Hittable *world, int depth)
 {
@@ -319,6 +316,8 @@ Hittable *finalScene()
 	return new HittableList(list, l);
 }
 
+#if 0
+// main entry point
 int main()
 {
 	// Calculate Time for running the code
@@ -392,3 +391,77 @@ int main()
 
 	return 0;
 }
+#endif
+
+// ----------------------
+#if 0
+// Monte Carlo (MC) Program Estimate Number Pi
+#include <iostream>
+
+int main()
+{
+	int N = 1000;
+	int insideCircle = 0;
+	for (int i = 0; i < N; i++)
+	{
+		float x = 2 * randomDouble() - 1;
+		float y = 2 * randomDouble() - 1;
+		if (x * x + y * y < 1)
+			insideCircle++;
+	}
+	std::cout << "Estimated of Pi = " << 4 * float(insideCircle) / N << "\n";
+	return 0;
+}
+#endif
+// ----------------------
+#if 0
+// Monte Carlo (MC) Program Estimate Number Pi
+#include <iostream>
+
+int main()
+{
+	int insideCircle = 0;
+	int runs = 0;
+	while (true)
+	{
+		runs++;
+		float x = 2 * randomDouble() - 1;
+		float y = 2 * randomDouble() - 1;
+		if (x * x + y * y < 1)
+			insideCircle++;
+
+		if (runs % 100000 == 0)
+			std::cout << "Estimate of Pi = " << 4 * float(insideCircle) / runs << "\n";
+	}
+}
+#endif
+
+// ----------------------
+#if 1
+// Monte Carlo (MC) Program Estimate Number Pi
+#include <iostream>
+
+int main()
+{
+	int insideCircle = 0;
+	int insideCircleStratified = 0;
+	int sqrtN = 10000;
+	for (int i = 0; i < sqrtN; i++)
+	{
+		for (int j = 0; j < sqrtN; j++)
+		{
+			float x = 2 * randomDouble() - 1;
+			float y = 2 * randomDouble() - 1;
+			if (x * x + y * y < 1)
+				insideCircle++;
+			x = 2 * ((i + randomDouble()) / sqrtN) - 1;
+			y = 2 * ((j + randomDouble()) / sqrtN) - 1;
+			if (x * x + y * y < 1)
+				insideCircleStratified++;
+		}
+	}
+	std::cout << "Regular    Estimate of Pi = " << 4 * float(insideCircle) / (sqrtN * sqrtN) << "\n";
+	std::cout << "Stratified Estimate of Pi = " << 4 * float(insideCircleStratified) / (sqrtN * sqrtN) << "\n";
+}
+
+#endif

@@ -7,6 +7,16 @@
             "type": "shell",
             "label": "build",
             "command": "${workspaceFolder}\\build.bat",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "run",
+            "command": "${workspaceFolder}\\${workspaceFolderBasename}.exe",
             "problemMatcher": []
         }
     ]
