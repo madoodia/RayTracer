@@ -327,7 +327,7 @@ int main()
 		Timer timer;
 		int nx = 800;
 		int ny = 800;
-		int ns = 100; // samples
+		int ns = 1000; // samples
 
 		std::cout << "Width: " << nx << "\nHeight: " << ny << "\nSamples: " << ns << std::endl;
 		std::cout << "\nRendering...\n";
