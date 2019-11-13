@@ -27,6 +27,7 @@
 #include "flipNormal.h"
 #include "box.h"
 #include "transformation.h"
+#include "volume.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -228,6 +229,37 @@ Hittable *cornellBox2Scene()
 	// return new bvhNode(list, i, 0.0, 1.0); // using BVH method (took longer)
 }
 
+Hittable *cornellSmokeScene()
+{
+	Hittable **list = new Hittable *[8];
+	int i = 0;
+	Material *red = new Lambertian(new ConstantTexture(vec3(0.65, 0.05, 0.05)));
+	Material *white = new Lambertian(new ConstantTexture(vec3(0.73, 0.73, 0.73)));
+	Material *green = new Lambertian(new ConstantTexture(vec3(0.12, 0.45, 0.15)));
+	Material *light = new DiffuseLight(new ConstantTexture(vec3(10, 10, 10)));
+
+	list[i++] = new FlipNormal(new YZRect(0, 555, 0, 555, 555, green));
+	list[i++] = new YZRect(0, 555, 0, 555, 0, red);
+	list[i++] = new XZRect(113, 443, 127, 432, 554, light);
+	list[i++] = new FlipNormal(new XZRect(0, 555, 0, 555, 555, white));
+	list[i++] = new XZRect(0, 555, 0, 555, 0, white);
+	list[i++] = new FlipNormal(new XYRect(0, 555, 0, 555, 555, white));
+
+	Hittable *b1 = new Translate(
+		new RotateY(new Box(vec3(0, 0, 0), vec3(165, 165, 165), white), -18),
+		vec3(130, 0, 65));
+	Hittable *b2 = new Translate(
+		new RotateY(new Box(vec3(0, 0, 0), vec3(165, 330, 165), white), 15),
+		vec3(265, 0, 295));
+
+	list[i++] = new ConstantMedium(
+		b1, 0.01, new ConstantTexture(vec3(1.0, 1.0, 1.0)));
+	list[i++] = new ConstantMedium(
+		b2, 0.01, new ConstantTexture(vec3(0.0, 0.0, 0.0)));
+
+	return new HittableList(list, i);
+}
+
 int main()
 {
 	// Calculate Time for running the code
@@ -254,7 +286,8 @@ int main()
 		// Hittable *world = moonScene();
 		// Hittable *world = simpleLightScene();
 		// Hittable *world = cornellBoxScene();
-		Hittable *world = cornellBox2Scene();
+		// Hittable *world = cornellBox2Scene();
+		Hittable *world = cornellSmokeScene();
 
 		// vec3 lookFrom(13, 2, 3);
 		vec3 lookFrom(278, 278, -800);
