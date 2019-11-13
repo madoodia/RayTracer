@@ -5,4 +5,4 @@ http://in1weekend.blogspot.com/
 
 https://raytracing.github.io/
 
-![image](https://github.com/madoodia/RayTracer/blob/RayTracing-TheNextWeek/output/12_final03_samples100.PNG)
+![image](https://github.com/madoodia/RayTracer/blob/RayTracing-TheNextWeek/output/02_10_finalScene2_samples1000.PNG)
