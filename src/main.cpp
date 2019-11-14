@@ -2,7 +2,7 @@
 // (C) 2019
 // All rights reserved.
 // ------------------
-
+#if 0
 // PPM Viewer: http://web.eecs.utk.edu/~smarz1/pgmview/
 
 // C++ Headers
@@ -316,7 +316,6 @@ Hittable *finalScene()
 	return new HittableList(list, l);
 }
 
-#if 0
 // main entry point
 int main()
 {
@@ -394,8 +393,10 @@ int main()
 #endif
 
 // ----------------------
+
 #if 0
-// Monte Carlo (MC) Program Estimate Number Pi
+// Monte Carlo (MC) Program Estimate Number P
+// A simple MC - 1
 #include <iostream>
 
 int main()
@@ -415,7 +416,7 @@ int main()
 #endif
 // ----------------------
 #if 0
-// Monte Carlo (MC) Program Estimate Number Pi
+// A simple MC - 2
 #include <iostream>
 
 int main()
@@ -437,8 +438,8 @@ int main()
 #endif
 
 // ----------------------
-#if 1
-// Monte Carlo (MC) Program Estimate Number Pi
+#if 0
+// A simple MC - 3
 #include <iostream>
 
 int main()
@@ -460,8 +461,108 @@ int main()
 				insideCircleStratified++;
 		}
 	}
+	std::cout.precision(19); // to get more precision in print
 	std::cout << "Regular    Estimate of Pi = " << 4 * float(insideCircle) / (sqrtN * sqrtN) << "\n";
 	std::cout << "Stratified Estimate of Pi = " << 4 * float(insideCircleStratified) / (sqrtN * sqrtN) << "\n";
 }
 
+#endif
+// ----------------------
+#if 0
+// One Dimensional MC Integration 1
+#include <iostream>
+
+int main()
+{
+	int N = 1000000;
+	float sum;
+	for (int i = 0; i < N; i++)
+	{
+		float x = 2 * randomDouble();
+		sum += x * x;
+	}
+	std::cout.precision(19); // to get more precision in print
+	std::cout << "I =" << 2 * sum / N << "\n";
+}
+#endif
+// ----------------------
+#if 0
+// One Dimensional MC Integration 2
+#include <iostream>
+#include <math.h>
+#include <stdlib.h>
+
+#include "common.h"
+
+inline float pdf(float x)
+{
+	return 0.5 * x;
+}
+
+int main()
+{
+	int N = 1000000;
+	float sum;
+	for (int i = 0; i < N; i++)
+	{
+		float x = sqrt(4 * randomDouble());
+		sum += x * x / pdf(x);
+	}
+	std::cout.precision(19); // to get more precision in print
+	std::cout << "I =" << sum / N << "\n"; // Nan
+}
+#endif
+// ----------------------
+#if 0
+// One Dimensional MC Integration 3
+#include <iostream>
+#include <math.h>
+#include <stdlib.h>
+
+#include "common.h"
+
+inline float pdf(float x)
+{
+	return 0.5;
+}
+
+int main()
+{
+	int N = 1000000;
+	float sum;
+	for (int i = 0; i < N; i++)
+	{
+		float x = 2 * randomDouble();
+		sum += x * x / pdf(x);
+	}
+	std::cout.precision(19); // to get more precision in print
+	std::cout << "I =" << sum / N << "\n";
+}
+#endif
+// ----------------------
+#if 1
+// One Dimensional MC Integration 4
+#include <iostream>
+#include <math.h>
+#include <stdlib.h>
+
+#include "common.h"
+
+inline float pdf(float x)
+{
+	return 3 * x * x / 8;
+}
+
+int main()
+{
+	int N = 1;
+	float sum;
+	for (int i = 0; i < N; i++)
+	{
+		float x = pow(8 * randomDouble(), 1. / 3.);
+		sum += x * x / pdf(x);
+	}
+	std::cout.precision(19); // to get more precision in print
+	std::cout << "I =" << sum / N << "\n";
+}
 #endif
