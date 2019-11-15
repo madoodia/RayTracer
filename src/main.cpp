@@ -212,9 +212,9 @@ Hittable *cornellBox2Scene()
 	list[i++] = new FlipNormal(new XYRect(0, 555, 0, 555, 555, white));
 
 	list[i++] = new Translate(
-		new RotateZ(new Box(vec3(0, 0, 0),
+		new RotateY(new Box(vec3(0, 0, 0),
 							vec3(165, 165, 165), white),
-					-45),
+					-18),
 		vec3(130, 0, 65));
 	list[i++] = new Translate(
 		new RotateY(new Box(vec3(0, 0, 0),
@@ -315,7 +315,31 @@ Hittable *finalScene()
 							  vec3(-100, 270, 395));
 	return new HittableList(list, l);
 }
-#if 0
+
+Hittable *cornellBox3Scene()
+{
+	int i = 0;
+	Hittable **list = new Hittable *[8];
+	Material *red = new Lambertian(new ConstantTexture(vec3(0.65, 0.05, 0.05)));
+	Material *white = new Lambertian(new ConstantTexture(vec3(0.73, 0.73, 0.73)));
+	Material *green = new Lambertian(new ConstantTexture(vec3(0.12, 0.45, 0.15)));
+	Material *light = new DiffuseLight(new ConstantTexture(vec3(15, 15, 15)));
+	list[i++] = new FlipNormal(new YZRect(0, 555, 0, 555, 555, green));
+	list[i++] = new YZRect(0, 555, 0, 555, 0, red);
+	list[i++] = new XZRect(213, 343, 227, 332, 554, light);
+	list[i++] = new FlipNormal(new XZRect(0, 555, 0, 555, 555, white));
+	list[i++] = new XZRect(0, 555, 0, 555, 0, white);
+	list[i++] = new FlipNormal(new XYRect(0, 555, 0, 555, 555, white));
+	list[i++] = new Translate(new RotateY(
+								  new Box(vec3(0, 0, 0), vec3(165, 165, 165), white), -18),
+							  vec3(130, 0, 65));
+	list[i++] = new Translate(new RotateY(
+								  new Box(vec3(0, 0, 0), vec3(165, 330, 165), white), 15),
+							  vec3(265, 0, 295));
+	return new HittableList(list, i);
+}
+
+#if 1
 // main entry point
 int main()
 {
@@ -323,8 +347,8 @@ int main()
 	// inline functions and regular functions.
 	{
 		Timer timer;
-		int nx = 800;
-		int ny = 800;
+		int nx = 500;
+		int ny = 500;
 		int ns = 100; // samples
 
 		std::cout << "Width: " << nx << "\nHeight: " << ny << "\nSamples: " << ns << std::endl;
@@ -345,7 +369,8 @@ int main()
 		// Hittable *world = cornellBoxScene();
 		// Hittable *world = cornellBox2Scene();
 		// Hittable *world = cornellSmokeScene();
-		Hittable *world = finalScene();
+		// Hittable *world = finalScene();
+		Hittable *world = cornellBox3Scene();
 
 		// vec3 lookFrom(13, 2, 3);
 		vec3 lookFrom(278, 278, -800);
@@ -567,7 +592,7 @@ int main()
 }
 #endif
 // ----------------------
-#if 1
+#if 0
 // MC Integration on the Sphere of Directions 1
 #include <iostream>
 #include <math.h>
