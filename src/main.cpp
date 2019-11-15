@@ -37,9 +37,11 @@ vec3 setColor(const Ray &ray, Hittable *world, int depth)
 		Ray scattered;
 		vec3 attenuation;
 		vec3 emitted = record.matPtr->emitted(record.u, record.v, record.p);
-		if (depth < 50 && record.matPtr->scatter(ray, record, attenuation, scattered))
+		float pdf;
+		vec3 albedo;
+		if (depth < 50 && record.matPtr->scatter(ray, record, albedo, scattered, pdf))
 		{
-			return emitted + attenuation * setColor(scattered, world, depth + 1); // recursive
+			return emitted + albedo * record.matPtr->scatteringPDF(ray, record, scattered) * setColor(scattered, world, depth + 1) / pdf; // recursive
 		}
 		else
 		{

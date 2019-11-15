@@ -13,8 +13,20 @@ class Material
 {
 public:
 	Material() {}
-	virtual bool scatter(const Ray &rayIn, const HitRecord &record, vec3 &attenuation, Ray &scattered) const = 0;
-	virtual vec3 emitted(float u, float v, const vec3 &p) const { return vec3(0, 0, 0); }
+	virtual bool scatter(const Ray &rayIn, const HitRecord &record, vec3 &albedo,
+						 Ray &scattered, float &pdf) const
+	{
+		return false;
+	}
+	virtual float scatteringPDF(const Ray &rayIn, const HitRecord &record,
+								const Ray &scattered) const
+	{
+		return 0;
+	}
+	virtual vec3 emitted(float u, float v, const vec3 &p) const
+	{
+		return vec3(0, 0, 0);
+	}
 };
 
 class Lambertian : public Material
@@ -24,12 +36,26 @@ public:
 
 public:
 	Lambertian(Texture *a) : albedo(a) {}
-	virtual bool scatter(const Ray &rayIn, const HitRecord &record, vec3 &attenuation, Ray &scattered) const
+	bool scatter(const Ray &rayIn, const HitRecord &record, vec3 &alb,
+				 Ray &scattered, float &pdf) const
 	{
-		vec3 target = record.p + record.normal + randomOnSphere();
-		scattered = Ray(record.p, target - record.p, rayIn.time());
-		attenuation = albedo->value(record.u, record.v, record.p);
+		vec3 direction;
+		do
+		{
+			direction = randomOnSphere();
+		} while (dot(direction, record.normal) < 0);
+		scattered = Ray(record.p, direction.normalize(), rayIn.time());
+		alb = albedo->value(record.u, record.v, record.p);
+		pdf = 0.5 / M_PI;
 		return true;
+	}
+
+	float scatteringPDF(const Ray &rayIn, const HitRecord &record, const Ray &scattered) const
+	{
+		float cosine = dot(record.normal, scattered.direction().normalize());
+		if (cosine < 0)
+			return 0;
+		return cosine / M_PI;
 	}
 };
 
