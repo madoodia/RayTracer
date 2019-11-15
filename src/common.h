@@ -52,7 +52,7 @@ vec3 randomOnSphere()
 	{
 		p = 2.0 * vec3(randomDouble(), randomDouble(), randomDouble()) - vec3(1, 1, 1);
 	} while (dot(p, p) >= 1.0);
-	return p;
+	return p.normalize();
 }
 
 vec3 reflect(const vec3 &v, const vec3 &n)

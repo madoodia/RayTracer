@@ -2,7 +2,7 @@
 // (C) 2019
 // All rights reserved.
 // ------------------
-#if 0
+
 // PPM Viewer: http://web.eecs.utk.edu/~smarz1/pgmview/
 
 // C++ Headers
@@ -315,7 +315,7 @@ Hittable *finalScene()
 							  vec3(-100, 270, 395));
 	return new HittableList(list, l);
 }
-
+#if 0
 // main entry point
 int main()
 {
@@ -540,7 +540,7 @@ int main()
 }
 #endif
 // ----------------------
-#if 1
+#if 0
 // One Dimensional MC Integration 4
 #include <iostream>
 #include <math.h>
@@ -566,3 +566,31 @@ int main()
 	std::cout << "I =" << sum / N << "\n";
 }
 #endif
+// ----------------------
+#if 1
+// MC Integration on the Sphere of Directions 1
+#include <iostream>
+#include <math.h>
+#include <stdlib.h>
+
+#include "common.h"
+
+inline float pdf(const vec3 &p)
+{
+	return 1 / (4 * M_PI);
+}
+
+int main()
+{
+	int N = 1000000;
+	float sum;
+	for (int i = 0; i < N; i++)
+	{
+		vec3 d = randomOnSphere();
+		float cosineSquared = d.z * d.z;
+		sum += cosineSquared / pdf(d);
+	}
+	std::cout << "I =" << sum / N << "\n";
+}
+#endif
+// I =2.50892
