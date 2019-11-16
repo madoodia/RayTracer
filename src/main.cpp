@@ -341,7 +341,7 @@ Hittable *cornellBox3Scene()
 	return new HittableList(list, i);
 }
 
-#if 1
+#if 0
 // main entry point
 int main()
 {
@@ -620,4 +620,83 @@ int main()
 	std::cout << "I =" << sum / N << "\n";
 }
 #endif
-// I =2.50892
+// ----------------------
+#if 0
+// Generating Random Directions 1
+#include <iostream>
+#include <math.h>
+#include <stdlib.h>
+
+#include "common.h"
+int main()
+{
+	for (int i = 0; i < 200; i++)
+	{
+		float r1 = randomDouble();
+		float r2 = randomDouble();
+		float x = cos(2 * M_PI * r1) * 2 * sqrt(r2 * (1 - r2));
+		float y = sin(2 * M_PI * r1) * 2 * sqrt(r2 * (1 - r2));
+		float z = 1 - 2 * r2;
+
+		std::cout << x << " " << y << " " << z << "\n";
+	}
+}
+#endif
+// ----------------------
+#if 0
+// Generating Random Directions 2
+#include <iostream>
+#include <math.h>
+#include <stdlib.h>
+
+#include "common.h"
+int main()
+{
+	int N = 1000000;
+	float sum = 0.0;
+	for (int i = 0; i < N; i++)
+	{
+		float r1 = randomDouble();
+		float r2 = randomDouble();
+		float x = cos(2 * M_PI * r1) * 2 * sqrt(r2 * (1 - r2));
+		float y = sin(2 * M_PI * r1) * 2 * sqrt(r2 * (1 - r2));
+		float z = 1 - r2;
+		sum += z * z * z / (1.0 / (2.0 * M_PI));
+	}
+	std::cout << "PI/2 = " << M_PI / 2 << "\n";
+	std::cout << "Estimate = " << sum / N << "\n";
+}
+#endif
+// ----------------------
+#if 1
+// Generating Random Directions 3
+#include <iostream>
+#include <math.h>
+#include <stdlib.h>
+
+#include "common.h"
+
+inline vec3 randomCosineDirection()
+{
+	float r1 = randomDouble();
+	float r2 = randomDouble();
+	float z = sqrt(1 - r2);
+	float phi = 2 * M_PI * r1;
+	float x = cos(phi) * sqrt(r2);
+	float y = sin(phi) * sqrt(r2);
+	return vec3(x, y, z);
+}
+
+int main()
+{
+	int N = 1000000;
+	float sum = 0.0;
+	for (int i = 0; i < N; i++)
+	{
+		vec3 v = randomCosineDirection();
+		sum += v.z * v.z * v.z / (v.z / (M_PI));
+	}
+	std::cout << "PI/2 = " << M_PI / 2 << "\n";
+	std::cout << "Estimate = " << sum / N << "\n";
+}
+#endif
