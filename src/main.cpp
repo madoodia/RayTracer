@@ -41,7 +41,21 @@ vec3 setColor(const Ray &ray, Hittable *world, int depth)
 		vec3 albedo;
 		if (depth < 50 && record.matPtr->scatter(ray, record, albedo, scattered, pdf))
 		{
-			return emitted + albedo * record.matPtr->scatteringPDF(ray, record, scattered) * setColor(scattered, world, depth + 1) / pdf; // recursive
+			vec3 onLight = vec3(213 + randomDouble() * (343 - 213),
+								554,
+								227 + randomDouble() * (332 - 227));
+			vec3 toLight = onLight - record.p;
+			float distanceSquared = toLight.squareLength();
+			toLight.normalize();
+			if (dot(toLight, record.normal) < 0)
+				return emitted;
+			float lightArea = (343 - 213) * (332 - 227);
+			float lightCosine = fabs(toLight.y);
+			if (lightCosine < 0.000001)
+				return emitted;
+			pdf = distanceSquared / (lightCosine * lightArea);
+			scattered = Ray(record.p, toLight, ray.time());
+			return emitted + albedo * record.matPtr->scatteringPDF(ray, record, scattered) * setColor(scattered, world, depth + 1) / pdf;
 		}
 		else
 		{
