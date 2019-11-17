@@ -28,6 +28,7 @@
 #include "box.h"
 #include "transformation.h"
 #include "volume.h"
+#include "pdf.h"
 
 vec3 setColor(const Ray &ray, Hittable *world, int depth)
 {
@@ -41,7 +42,17 @@ vec3 setColor(const Ray &ray, Hittable *world, int depth)
 		vec3 albedo;
 		if (depth < 50 && record.matPtr->scatter(ray, record, albedo, scattered, pdf))
 		{
-			return emitted + albedo * record.matPtr->scatteringPDF(ray, record, scattered) * setColor(scattered, world, depth + 1) / pdf; // recursive
+			Hittable *lightShape = new XZRect(213, 343, 227, 332, 554, 0);
+			HittablePDF p0(lightShape, record.p);
+			CosinePDF p1(record.normal);
+			MixturePDF p(&p0, &p1);
+
+			scattered = Ray(record.p, p.generate(), ray.time());
+			pdf = p.value(scattered.direction());
+			return emitted +
+				   albedo *
+					   record.matPtr->scatteringPDF(ray, record, scattered) *
+					   setColor(scattered, world, depth + 1) / pdf; // recursive
 		}
 		else
 		{
@@ -387,6 +398,9 @@ int main()
 				   float(nx) / float(ny),
 				   aperture, dof,
 				   0.0, 1.0);
+
+		float *u = new float;
+		float *v = new float;
 		for (int j = ny - 1; j >= 0; j--)
 		{
 			for (int i = 0; i < nx; i++)
@@ -394,10 +408,10 @@ int main()
 				vec3 col(0.0, 0.0, 0.0);
 				for (int s = 0; s < ns; s++)
 				{
-					float u = float(i + randomDouble()) / float(nx);
-					float v = float(j + randomDouble()) / float(ny);
+					*u = float(i + randomDouble()) / float(nx);
+					*v = float(j + randomDouble()) / float(ny);
 
-					Ray ray = cam.getRay(u, v);
+					Ray ray = cam.getRay(*u, *v);
 					col += setColor(ray, world, 0);
 				}
 				col /= float(ns);

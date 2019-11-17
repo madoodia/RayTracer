@@ -56,6 +56,27 @@ public:
         box = AABB(vec3(x0, k - 0.0001, z0), vec3(x1, k + 0.0001, z1));
         return true;
     }
+
+    virtual float pdfValue(const vec3 &o, const vec3 &v) const
+    {
+        HitRecord rec;
+        if (this->hit(Ray(o, v), 0.001, FLT_MAX, rec))
+        {
+            float area = (x1 - x0) * (z1 - z0);
+            float distanceSquared = rec.t * rec.t * v.squareLength();
+            float cosine = fabs(dot(v, rec.normal) / v.length());
+            return distanceSquared / (cosine * area);
+        }
+        else
+            return 0;
+    }
+    virtual vec3 random(const vec3 &o) const
+    {
+        vec3 randomPoint = vec3(x0 + randomDouble() * (x1 - x0), k,
+                                z0 + randomDouble() * (z1 - z0));
+        return randomPoint - o;
+    }
+
     Material *mp;
     float x0, x1, z0, z1, k;
 };
