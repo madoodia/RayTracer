@@ -341,7 +341,7 @@ Hittable *cornellBox3Scene()
 	return new HittableList(list, i);
 }
 
-#if 0
+#if 1
 // main entry point
 int main()
 {
@@ -668,24 +668,13 @@ int main()
 }
 #endif
 // ----------------------
-#if 1
+#if 0
 // Generating Random Directions 3
 #include <iostream>
 #include <math.h>
 #include <stdlib.h>
 
 #include "common.h"
-
-inline vec3 randomCosineDirection()
-{
-	float r1 = randomDouble();
-	float r2 = randomDouble();
-	float z = sqrt(1 - r2);
-	float phi = 2 * M_PI * r1;
-	float x = cos(phi) * sqrt(r2);
-	float y = sin(phi) * sqrt(r2);
-	return vec3(x, y, z);
-}
 
 int main()
 {

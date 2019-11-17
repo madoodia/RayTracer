@@ -81,4 +81,15 @@ float schlick(float cosine, float refIdx)
 	return r0 + (1 - r0) * pow((1 - cosine), 5);
 }
 
+inline vec3 randomCosineDirection()
+{
+	float r1 = randomDouble();
+	float r2 = randomDouble();
+	float z = sqrt(1 - r2);
+	float phi = 2 * M_PI * r1;
+	float x = cos(phi) * sqrt(r2);
+	float y = sin(phi) * sqrt(r2);
+	return vec3(x, y, z);
+}
+
 #endif // COMMON_H

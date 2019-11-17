@@ -8,6 +8,7 @@
 
 #include "hittable.h"
 #include "texture.h"
+#include "onb.h"
 
 class Material
 {
@@ -36,17 +37,18 @@ public:
 
 public:
 	Lambertian(Texture *a) : albedo(a) {}
-	bool scatter(const Ray &rayIn, const HitRecord &record, vec3 &alb,
-				 Ray &scattered, float &pdf) const
+	bool scatter(const Ray &rayIn,
+				 const HitRecord &record,
+				 vec3 &alb,
+				 Ray &scattered,
+				 float &pdf) const
 	{
-		vec3 direction;
-		do
-		{
-			direction = randomOnSphere();
-		} while (dot(direction, record.normal) < 0);
+		ONB uvw;
+		uvw.buildFromW(record.normal);
+		vec3 direction = uvw.local(randomCosineDirection());
 		scattered = Ray(record.p, direction.normalize(), rayIn.time());
 		alb = albedo->value(record.u, record.v, record.p);
-		pdf = 0.5 / M_PI;
+		pdf = dot(uvw.w(), scattered.direction()) / M_PI;
 		return true;
 	}
 
@@ -137,7 +139,7 @@ class DiffuseLight : public Material
 {
 public:
 	DiffuseLight(Texture *a) : emit(a) {}
-	virtual bool scatter(const Ray &r_in, const HitRecord &rec,
+	virtual bool scatter(const Ray &rayIn, const HitRecord &rec,
 						 vec3 &attenuation, Ray &scattered) const { return false; }
 	virtual vec3 emitted(float u, float v, const vec3 &p) const
 	{
