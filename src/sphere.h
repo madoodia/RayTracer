@@ -7,6 +7,7 @@
 #define SPHERE_H
 
 #include "hittable.h"
+#include "onb.h"
 
 class Material;
 
@@ -24,7 +25,31 @@ public:
 	virtual bool hit(const Ray &ray, float tMin, float tMax,
 					 HitRecord &record) const;
 	virtual bool boundingBox(float t0, float t1, AABB &box) const;
+	virtual float pdfValue(const vec3 &o, const vec3 &v) const;
+	virtual vec3 random(const vec3 &o) const;
 };
+
+float Sphere::pdfValue(const vec3 &o, const vec3 &v) const
+{
+	HitRecord rec;
+	if (this->hit(Ray(o, v), 0.001, FLT_MAX, rec))
+	{
+		float cos_theta_max = sqrt(1 - radius * radius / (center - o).squareLength());
+		float solid_angle = 2 * M_PI * (1 - cos_theta_max);
+		return 1 / solid_angle;
+	}
+	else
+		return 0;
+}
+
+vec3 Sphere::random(const vec3 &o) const
+{
+	vec3 direction = center - o;
+	float distanceSquared = direction.squareLength();
+	ONB uvw;
+	uvw.buildFromW(direction);
+	return uvw.local(randomToSphere(radius, distanceSquared));
+}
 
 bool Sphere::boundingBox(float t0, float t1, AABB &box) const
 {

@@ -19,7 +19,24 @@ public:
 	HittableList(Hittable **l, int n) : list(l), listSize(n) {}
 	virtual bool hit(const Ray &ray, float tMin, float tMax, HitRecord &record) const;
 	virtual bool boundingBox(float t0, float t1, AABB &box) const;
+	virtual float pdfValue(const vec3 &o, const vec3 &v) const;
+	virtual vec3 random(const vec3 &o) const;
 };
+
+float HittableList::pdfValue(const vec3 &o, const vec3 &v) const
+{
+	float weight = 1.0 / listSize;
+	float sum = 0;
+	for (int i = 0; i < listSize; i++)
+		sum += weight * list[i]->pdfValue(o, v);
+	return sum;
+}
+
+vec3 HittableList::random(const vec3 &o) const
+{
+	int index = int(randomDouble() * listSize);
+	return list[index]->random(o);
+}
 
 bool HittableList::hit(const Ray &ray, float tMin, float tMax, HitRecord &record) const
 {

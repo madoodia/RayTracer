@@ -40,4 +40,4 @@ void ONB::buildFromW(const vec3 &n)
     axis[0] = cross(w(), v());
 }
 
-#endif ONB_H
+#endif //ONB_H

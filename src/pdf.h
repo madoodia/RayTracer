@@ -16,6 +16,7 @@ class PDF
 public:
     virtual float value(const vec3 &direction) const = 0;
     virtual vec3 generate() const = 0;
+    virtual ~PDF() {}
 };
 
 class CosinePDF : public PDF
@@ -75,4 +76,4 @@ public:
     PDF *p[2];
 };
 
-#endif PDF_H
+#endif //PDF_H

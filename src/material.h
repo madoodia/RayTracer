@@ -9,22 +9,37 @@
 #include "hittable.h"
 #include "texture.h"
 #include "onb.h"
+#include "pdf.h"
+
+struct ScatterRecord
+{
+	Ray specularRay;
+	bool isSpecular;
+	vec3 attenuation;
+	PDF *pdfPtr;
+};
 
 class Material
 {
 public:
 	Material() {}
-	virtual bool scatter(const Ray &rayIn, const HitRecord &record, vec3 &albedo,
-						 Ray &scattered, float &pdf) const
+	virtual bool scatter(const Ray &rayIn,
+						 const HitRecord &hrec,
+						 ScatterRecord &srec) const
 	{
 		return false;
 	}
-	virtual float scatteringPDF(const Ray &rayIn, const HitRecord &record,
+	virtual float scatteringPDF(const Ray &rayIn,
+								const HitRecord &record,
 								const Ray &scattered) const
 	{
 		return 0;
 	}
-	virtual vec3 emitted(float u, float v, const vec3 &p) const
+	virtual vec3 emitted(const Ray &rayIn,
+						 const HitRecord &record,
+						 float u,
+						 float v,
+						 const vec3 &p) const
 	{
 		return vec3(0, 0, 0);
 	}
@@ -38,17 +53,12 @@ public:
 public:
 	Lambertian(Texture *a) : albedo(a) {}
 	bool scatter(const Ray &rayIn,
-				 const HitRecord &record,
-				 vec3 &alb,
-				 Ray &scattered,
-				 float &pdf) const
+				 const HitRecord &hrec,
+				 ScatterRecord &srec) const
 	{
-		ONB uvw;
-		uvw.buildFromW(record.normal);
-		vec3 direction = uvw.local(randomCosineDirection());
-		scattered = Ray(record.p, direction.normalize(), rayIn.time());
-		alb = albedo->value(record.u, record.v, record.p);
-		pdf = dot(uvw.w(), scattered.direction()) / M_PI;
+		srec.isSpecular = false;
+		srec.attenuation = albedo->value(hrec.u, hrec.v, hrec.p);
+		srec.pdfPtr = new CosinePDF(hrec.normal);
 		return true;
 	}
 
@@ -75,12 +85,16 @@ public:
 		else
 			fuzz = 1;
 	}
-	virtual bool scatter(const Ray &rayIn, const HitRecord &record, vec3 &attenuation, Ray &scattered) const
+	virtual bool scatter(const Ray &rayIn,
+						 const HitRecord &hrec,
+						 ScatterRecord &srec) const
 	{
-		vec3 reflected = reflect(rayIn.direction().normalize(), record.normal);
-		scattered = Ray(record.p, reflected + fuzz * randomOnSphere(), rayIn.time());
-		attenuation = albedo;
-		return (dot(scattered.direction(), record.normal) > 0);
+		vec3 reflected = reflect(rayIn.direction().normalize(), hrec.normal);
+		srec.specularRay = Ray(hrec.p, reflected + fuzz * randomOnSphere());
+		srec.attenuation = albedo;
+		srec.isSpecular = true;
+		srec.pdfPtr = 0;
+		return true;
 	}
 };
 
@@ -91,28 +105,30 @@ public:
 
 public:
 	Dielectric(float ri) : refIdx(ri) {}
-	virtual bool scatter(const Ray &rayIn, const HitRecord &record, vec3 &attenuation, Ray &scattered) const
+	virtual bool scatter(const Ray &rayIn,
+						 const HitRecord &hrec,
+						 ScatterRecord &srec) const
 	{
+		srec.isSpecular = true;
+		srec.pdfPtr = 0;
+		srec.attenuation = vec3(1.0, 1.0, 1.0);
 		vec3 outwardNormal;
-		vec3 reflected = reflect(rayIn.direction(), record.normal);
-		float niOnt;
-		attenuation = vec3(1.0, 1.0, 1.0);
+		vec3 reflected = reflect(rayIn.direction(), hrec.normal);
 		vec3 refracted;
+		float niOnt;
 		float reflectProb;
 		float cosine;
-		if (dot(rayIn.direction(), record.normal) > 0)
+		if (dot(rayIn.direction(), hrec.normal) > 0)
 		{
-			outwardNormal = -record.normal;
+			outwardNormal = -hrec.normal;
 			niOnt = refIdx;
-			cosine = refIdx * dot(rayIn.direction(), record.normal) / rayIn.direction().length();
-			// cosine = dot(rayIn.direction(), record.normal) / rayIn.direction().length();
-			// cosine = sqrt(1 - refIdx * refIdx * (1 - cosine * cosine));
+			cosine = refIdx * dot(rayIn.direction(), hrec.normal) / rayIn.direction().length();
 		}
 		else
 		{
-			outwardNormal = record.normal;
+			outwardNormal = hrec.normal;
 			niOnt = 1.0 / refIdx;
-			cosine = -dot(rayIn.direction(), record.normal) / rayIn.direction().length();
+			cosine = -dot(rayIn.direction(), hrec.normal) / rayIn.direction().length();
 		}
 		if (refract(rayIn.direction(), outwardNormal, niOnt, refracted))
 		{
@@ -120,16 +136,15 @@ public:
 		}
 		else
 		{
-			scattered = Ray(record.p, reflected, rayIn.time());
 			reflectProb = 1.0;
 		}
 		if (randomDouble() < reflectProb)
 		{
-			scattered = Ray(record.p, reflected, rayIn.time());
+			srec.specularRay = Ray(hrec.p, reflected);
 		}
 		else
 		{
-			scattered = Ray(record.p, refracted, rayIn.time());
+			srec.specularRay = Ray(hrec.p, refracted);
 		}
 		return true;
 	}
@@ -139,11 +154,16 @@ class DiffuseLight : public Material
 {
 public:
 	DiffuseLight(Texture *a) : emit(a) {}
-	virtual bool scatter(const Ray &rayIn, const HitRecord &rec,
-						 vec3 &attenuation, Ray &scattered) const { return false; }
-	virtual vec3 emitted(float u, float v, const vec3 &p) const
+	virtual vec3 emitted(const Ray &rayIn,
+						 const HitRecord &rec,
+						 float u,
+						 float v,
+						 const vec3 &p) const
 	{
-		return emit->value(u, v, p);
+		if (dot(rec.normal, rayIn.direction()) < 0.0)
+			return emit->value(u, v, p);
+		else
+			return vec3(0, 0, 0);
 	}
 	Texture *emit;
 };

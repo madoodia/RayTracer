@@ -92,4 +92,15 @@ inline vec3 randomCosineDirection()
 	return vec3(x, y, z);
 }
 
+inline vec3 randomToSphere(float radius, float distanceSquared)
+{
+	float r1 = randomDouble();
+	float r2 = randomDouble();
+	float z = 1 + r2 * (sqrt(1 - radius * radius / distanceSquared) - 1);
+	float phi = 2 * M_PI * r1;
+	float x = cos(phi) * sqrt(1 - z * z);
+	float y = sin(phi) * sqrt(1 - z * z);
+	return vec3(x, y, z);
+}
+
 #endif // COMMON_H
