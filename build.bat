@@ -27,4 +27,4 @@ cmake -G "NMake Makefiles" ..
 @REM cmake -G "Visual Studio 16 2019" ../
 cmake --build . --config Debug
 
-@REM CALL %ROOT%/bin/%BASENAME%.exe
+CALL %ROOT%/bin/%PROJECT_NAME%.exe > %ROOT%/output/image.ppm
