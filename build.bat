@@ -1,19 +1,30 @@
-@ECHO off
-rem madoodia@gmail.com
-rem ..................
+@REM # -------------------- #
+@REM # (C)2022 madoodia.com #
+@REM # -------------------- #
 
-SET HOME_DIR=%~dp0
-for %%a in ("%cd%") do set "FOLDER_NAME=%%~na"
+
+@ECHO OFF
+
+SET ROOT=%1
+SET FOLDER=%2
+SET FILE=%3
+SET BASENAME=%4
+SET PROJECT_NAME=Freedom
 
 call "%VCVARS_LOCATION%/vcvarsall.bat" x64
 
-pushd %HOME_DIR%
+call %ROOT%/envVars.bat
 
-call nmake
+if exist "%ROOT%/build" (
+    rmdir /s /q "%ROOT%/build"
+)
 
-popd
+CD %ROOT%
+MKDIR build
+CD build
 
-ECHO ---= Building is finished! =---
+cmake -G "NMake Makefiles" ..
+@REM cmake -G "Visual Studio 16 2019" ../
+cmake --build . --config Debug
 
-Pause
-cls
+@REM CALL %ROOT%/bin/%BASENAME%.exe

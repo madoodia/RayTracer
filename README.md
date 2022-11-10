@@ -5,5 +5,5 @@ This project is started with studying and learning from great resource of https:
 
 Features like Real-Time rendering and some fancy UIs and other cool features will be added to it.
 
-
-![image](https://github.com/madoodia/RayTracer/blob/RayTracing-InOneWeekend/output/12_final03_samples100.PNG)
+For viewing image in ppm format go to this website and load `output/image.ppm`
+https://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html

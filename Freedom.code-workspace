@@ -1,0 +1,104 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.nmake": "makefile",
+			"*.gnu": "makefile",
+			"*.win": "makefile",
+			"algorithm": "cpp",
+			"atomic": "cpp",
+			"chrono": "cpp",
+			"cmath": "cpp",
+			"cstddef": "cpp",
+			"cstdint": "cpp",
+			"cstdio": "cpp",
+			"cstdlib": "cpp",
+			"cstring": "cpp",
+			"cwchar": "cpp",
+			"exception": "cpp",
+			"fstream": "cpp",
+			"functional": "cpp",
+			"initializer_list": "cpp",
+			"ios": "cpp",
+			"iosfwd": "cpp",
+			"iostream": "cpp",
+			"istream": "cpp",
+			"iterator": "cpp",
+			"limits": "cpp",
+			"list": "cpp",
+			"map": "cpp",
+			"memory": "cpp",
+			"new": "cpp",
+			"numeric": "cpp",
+			"ostream": "cpp",
+			"ratio": "cpp",
+			"set": "cpp",
+			"stdexcept": "cpp",
+			"streambuf": "cpp",
+			"string": "cpp",
+			"system_error": "cpp",
+			"xthread": "cpp",
+			"thread": "cpp",
+			"tuple": "cpp",
+			"type_traits": "cpp",
+			"typeinfo": "cpp",
+			"unordered_map": "cpp",
+			"utility": "cpp",
+			"vector": "cpp",
+			"xfacet": "cpp",
+			"xhash": "cpp",
+			"xiosbase": "cpp",
+			"xlocale": "cpp",
+			"xlocinfo": "cpp",
+			"xlocnum": "cpp",
+			"xmemory": "cpp",
+			"xmemory0": "cpp",
+			"xstddef": "cpp",
+			"xstring": "cpp",
+			"xtr1common": "cpp",
+			"xtree": "cpp",
+			"xutility": "cpp",
+			"qevent": "cpp",
+			"qt": "cpp"
+		},
+		"editor.detectIndentation": false,
+		"editor.insertSpaces": true,
+		"editor.tabSize": 2,
+		"editor.useTabStops": false,
+		"C_Cpp.clang_format_path": "",
+		"C_Cpp.clang_format_style": "file",
+		"C_Cpp.dimInactiveRegions": false,
+		"C_Cpp.errorSquiggles": "Enabled",
+		"C_Cpp.autocomplete": "Default",
+		"C_Cpp.intelliSenseEngine": "Default",
+		"[cpp]": {
+			"editor.quickSuggestions": {
+				"comments": "on",
+				"strings": "on",
+				"other": "on"
+			}
+		},
+		"[c]": {
+			"editor.quickSuggestions": {
+				"comments": "on",
+				"strings": "on",
+				"other": "on"
+			}
+		},
+		"ppm-pgm-viewer-for-vscode.imagepreview.autoScalingMode": true,
+		"ppm-pgm-viewer-for-vscode.imagepreview.defaultPreviewScale": 1,
+		"ppm-pgm-viewer-for-vscode.imagepreview.uiPosition": "right",
+		"workbench.editorAssociations": {
+			"*.ppm": "default"
+		},
+	},
+  "extensions": {
+    "recommendations": [
+      "ms-vscode.cpptools"
+    ]
+  }
+}
