@@ -1,6 +1,6 @@
-# -------------------- #
-# (C)2022 madoodia.com #
-# -------------------- #
+# --------------------- #
+# (C) 2024 madoodia.com #
+# --------------------- #
 
 cmake_minimum_required (VERSION 3.17)
 cmake_policy(VERSION 3.17)
