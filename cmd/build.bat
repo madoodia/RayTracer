@@ -26,4 +26,8 @@ cmake -G "NMake Makefiles" ".."
 @REM cmake -G "Visual Studio 16 2019" ../
 cmake --build . --config Debug
 
+@REM Second method of building the project
+@REM cl -FC -Zi -Fe"W:\bin\%PROJECT_NAME%.exe" "W:\src\main.cpp" user32.lib gdi32.lib 
+@REM cl -FC -Zi -Fe"W:\bin\%PROJECT_NAME%.exe" "W:\src\main.cpp"
+
 popd
