@@ -64,9 +64,17 @@
     "C_Cpp.autocomplete": "Default",
     "C_Cpp.intelliSenseEngine": "Default",
     "[cpp]": {
-        "editor.quickSuggestions": true
+        "editor.quickSuggestions": {
+            "comments": "on",
+            "strings": "on",
+            "other": "on"
+        }
     },
     "[c]": {
-        "editor.quickSuggestions": true
+        "editor.quickSuggestions": {
+            "comments": "on",
+            "strings": "on",
+            "other": "on"
+        }
     },
 }

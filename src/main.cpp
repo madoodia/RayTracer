@@ -103,8 +103,7 @@ int main()
 		std::ofstream imageFile;
 		imageFile.open("output/outputImage.ppm");
 
-		imageFile << "P3\n"
-				  << nx << " " << ny << "\n255\n";
+		imageFile << "P3\n"  << nx << " " << ny << "\n255\n";
 
 		Hitable *world = randomScene();
 
