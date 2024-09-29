@@ -110,8 +110,8 @@ int main()
 	// inline functions and regular functions.
 	{
 		Timer timer;
-		int nx = 500;
-		int ny = 500;
+		int nx = 800;
+		int ny = 800;
 		int ns = 100; // samples
 
 		std::cout << "Width: " << nx << "\nHeight: " << ny << "\nSamples: " << ns << std::endl;
@@ -171,7 +171,7 @@ int main()
 		std::cout << "Time is: ";
 	}
 
-	std::system("pause");
+	// std::system("pause");
 
 	return 0;
 }
