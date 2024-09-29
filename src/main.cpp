@@ -388,7 +388,7 @@ int main()
 		std::cout << "Time is: ";
 	}
 
-	std::system("pause");
+	// std::system("pause");
 
 	return 0;
 }
