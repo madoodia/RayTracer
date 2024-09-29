@@ -15,9 +15,9 @@
     "C_Cpp.clang_format_path": "",
     "C_Cpp.clang_format_style": "file",
     "C_Cpp.dimInactiveRegions": false,
-    "C_Cpp.errorSquiggles": "Enabled",
-    "C_Cpp.autocomplete": "Default",
-    "C_Cpp.intelliSenseEngine": "Default",
+    "C_Cpp.errorSquiggles": "enabled",
+    "C_Cpp.autocomplete": "default",
+    "C_Cpp.intelliSenseEngine": "default",
     "[cpp]": {
       "editor.quickSuggestions": {
         "comments": "on",
@@ -90,24 +90,5 @@
         }
       }
     ]
-  },
-  "launch": {
-    "version": "0.2.0",
-    "configurations": [
-      {
-        "type": "cppvsdbg",
-        "name": "Debug",
-        "request": "launch",
-        "program": "${workspaceFolder}/cmd/Freedom.exe",
-        "args": [],
-        "stopAtEntry": false,
-        "cwd": "${workspaceFolder}",
-        "preLaunchTask": "build",
-        // "postDebugTask": "clean",
-        "environment": [],
-        "console": "externalTerminal"
-      }
-    ],
-    "compounds": []
   }
 }

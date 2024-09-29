@@ -3,4 +3,4 @@
 @REM # --------------------- #
 @echo OFF
 
-SET PROJECT_NAME=Freedom
+SET PROJECT_NAME=Raytracing
